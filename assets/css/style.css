@@ -1,0 +1,14 @@
+header{
+    display: flex;
+    justify-content: space-between;
+    background: antiquewhite;
+    font-size: larger;
+}
+main{
+    margin: 40px 350px 0 350px;
+    text-align: center;
+}
+main button{
+    font-size: x-large;
+    background: khaki;
+}
