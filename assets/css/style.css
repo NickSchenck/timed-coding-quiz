@@ -13,7 +13,8 @@ main{
 main input{
     font-size: x-large;
 }
-main button{
+button{
     font-size: x-large;
     margin: 20px;
+    text-align: center;
 }
