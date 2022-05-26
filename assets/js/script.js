@@ -90,6 +90,13 @@ function selectAnswer(e) {
     Array.from(answerButtonsEl.children).forEach(button => {
         setStatusClass(button, button.dataset.correct)
     })
+    if (nextQuestion.length > currentQuestion + 1) {
+    nextButton.classList.remove("hide")
+    }
+    else{
+        startButton.innerHTML = "Highscores"
+        startButton.classList.remove("hide")
+    }
 };
 function setStatusClass(element, correct) {
     clearStatusClass(element)
@@ -104,5 +111,8 @@ function clearStatusClass(element) {
     element.classList.remove("correct")
     element.classList.remove("wrong")
 };
-
+nextButton.addEventListener("click", () => {
+    currentQuestion++
+    setNextQuestion();
+});
 startButton.addEventListener("click", startGame);
