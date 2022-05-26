@@ -1,9 +1,10 @@
 var startButton = document.getElementById("start-btn");
+var scoreButton = document.getElementById("score-btn")
 var nextButton = document.getElementById("next-btn");
 var questionContainerEl = document.getElementById("question-container");
-var nextQuestion, currentQuestion
-var questionEl = document.getElementById("question")
-var answerButtonsEl = document.getElementById("answer-buttons")
+var nextQuestion, currentQuestion;
+var questionEl = document.getElementById("question");
+var answerButtonsEl = document.getElementById("answer-buttons");
 var questions = [
     {
         question: "What is 2+2?",
@@ -52,35 +53,35 @@ var questions = [
     }
 ];
 function startGame() {
-startButton.classList.add("hide")
-nextQuestion = questions.sort(() => Math.random() - .5)
-currentQuestion = 0
-questionContainerEl.classList.remove("hide")
+startButton.classList.add("hide");
+nextQuestion = questions.sort(() => Math.random() - .5);
+currentQuestion = 0;
+questionContainerEl.classList.remove("hide");
 setNextQuestion();
 };
 
 function setNextQuestion() {
     resetState();
-    showQuestion(nextQuestion[currentQuestion])
+    showQuestion(nextQuestion[currentQuestion]);
 };
 function showQuestion(question) {
     questionEl.innerText= question.question
     question.answers.forEach(answer => {
-        var button = document.createElement("button")
-        button.innerText = answer.option
-        button.classList.add("btn")
+        var button = document.createElement("button");
+        button.innerText = answer.option;
+        button.classList.add("btn");
         if (answer.correct) {
             button.dataset.correct = answer.correct
         };
-        button.addEventListener("click", selectAnswer)
-        answerButtonsEl.appendChild(button)
+        button.addEventListener("click", selectAnswer);
+        answerButtonsEl.appendChild(button);
     });
 };
 function resetState() {
     nextButton.classList.add("hide")
     while (answerButtonsEl.firstChild) {
         answerButtonsEl.removeChild(answerButtonsEl.firstChild)
-    }
+    };
 };
 
 function selectAnswer(e) {
@@ -89,14 +90,14 @@ function selectAnswer(e) {
     setStatusClass(document.body, correct)
     Array.from(answerButtonsEl.children).forEach(button => {
         setStatusClass(button, button.dataset.correct)
-    })
+    });
     if (nextQuestion.length > currentQuestion + 1) {
     nextButton.classList.remove("hide")
     }
     else{
-        startButton.innerHTML = "Highscores"
-        startButton.classList.remove("hide")
-    }
+        scoreButton.innerHTML = "Highscores"
+        scoreButton.classList.remove("hide")
+    };
 };
 function setStatusClass(element, correct) {
     clearStatusClass(element)
@@ -105,14 +106,27 @@ function setStatusClass(element, correct) {
     }
     else{
         element.classList.add("wrong")
-    }
+        
+    };
 };
 function clearStatusClass(element) {
     element.classList.remove("correct")
     element.classList.remove("wrong")
+};
+
+function timer(){
+    var sec = 50;
+    var timer = setInterval(function(){
+        document.getElementById('time-readout').innerHTML='Time Left:'+sec;
+        sec--;
+        if (sec < 0) {
+            clearInterval(timer);
+        };
+    }, 1000);
 };
 nextButton.addEventListener("click", () => {
     currentQuestion++
     setNextQuestion();
 });
 startButton.addEventListener("click", startGame);
+startButton.addEventListener("click", timer);
