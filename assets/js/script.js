@@ -5,52 +5,52 @@ var questionContainerEl = document.getElementById("question-container");
 var nextQuestion, currentQuestion;//returns null, letting these values be defined later in the doc
 var questionEl = document.getElementById("question");
 var answerButtonsEl = document.getElementById("answer-buttons");
-var sec = 30;
+var sec = 40;
 var scoreBoard = document.getElementById("score-board");
 var questions = [
   {
-    question: "What is 2+2?",
+    question: "What is a pseudo-class?",
     answers: [
-      { option: "4", correct: true },
-      { option: "7", correct: false },
-      { option: "99", correct: false },
-      { option: "31", correct: false }
+      { option: "A CSS keyword to target an element's state.", correct: true },
+      { option: "A CSS declaration that hides the element.", correct: false },
+      { option: "A financial class in society that isn't well defined.", correct: false },
+      { option: "Uhhhh...kinda germ??", correct: false }
     ]
   },
   {
-    question: "What is 2+3?",
+    question: "What is the purpose of the alt attribute for images?",
     answers: [
-      { option: "5", correct: true },
-      { option: "7", correct: false },
-      { option: "99", correct: false },
-      { option: "31", correct: false }
+      { option: "To make it easier to style the image with CSS", correct: false },
+      { option: "Give your image a grungy, punk-like filter", correct: false },
+      { option: "To provide context for the image", correct: true },
+      { option: "Alters the image with provided parameters", correct: false }
     ]
   },
   {
-    question: "What is 2+1?",
+    question: "What is the preferred way to include or link another file in programming?",
     answers: [
-      { option: "3", correct: true },
-      { option: "7", correct: false },          //Questions + Answers arrays
-      { option: "99", correct: false },
-      { option: "31", correct: false }
+      { option: "Relative pathing", correct: true },
+      { option: "Through the browser", correct: false },          //Questions + Answers arrays
+      { option: "Absolute pathing", correct: false },
+      { option: "Filing is for interns...get one of them to do it", correct: false }
     ]
   },
   {
-    question: "What is 2+7?",
+    question: "What is the command to push code to GitHub?",
     answers: [
-      { option: "9", correct: true },
-      { option: "7", correct: false },
-      { option: "99", correct: false },
-      { option: "31", correct: false }
+      { option: "git init", correct: false },
+      { option: "Push? Are you threatening me??", correct: false },
+      { option: "git commit -m", correct: false },
+      { option: "git push origin main", correct: true }
     ]
   },
   {
-    question: "What is 2+0?",
+    question: "Which of the following is NOT a reason to validate a user's responses?",
     answers: [
-      { option: "2", correct: true },
-      { option: "7", correct: false },
-      { option: "99", correct: false },
-      { option: "31", correct: false }
+      { option: "Increases the overall quality of the user data.", correct: false },
+      { option: "When their rude and a jerk.", correct: true },
+      { option: "Reduces bogus answers getting stored in the database.", correct: false },
+      { option: "Offers the user an opportunity to enter a correct response.", correct: false }
     ]
   }
 ];
