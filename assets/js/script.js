@@ -5,6 +5,10 @@ var questionContainerEl = document.getElementById("question-container");
 var nextQuestion, currentQuestion;
 var questionEl = document.getElementById("question");
 var answerButtonsEl = document.getElementById("answer-buttons");
+var scoreInput = document.getElementById("score-input");
+var submitButton = document.getElementById("submit-score");
+var sec = 30;
+var scoreBoard = document.getElementById("score-board");
 var questions = [
   {
     question: "What is 2+2?",
@@ -52,6 +56,7 @@ var questions = [
     ]
   }
 ];
+console.log(questions);
 function startGame() {
   startButton.classList.add("hide");
   timer();
@@ -59,12 +64,13 @@ function startGame() {
   currentQuestion = 0;
   questionContainerEl.classList.remove("hide");
   setNextQuestion();
-}
+};
 
 function setNextQuestion() {
   resetState();
   showQuestion(nextQuestion[currentQuestion]);
-}
+  
+};
 function showQuestion(question) {
   questionEl.innerText = question.question;
   question.answers.forEach((answer) => {
@@ -77,13 +83,13 @@ function showQuestion(question) {
     button.addEventListener("click", selectAnswer);
     answerButtonsEl.appendChild(button);
   });
-}
+};
 function resetState() {
   nextButton.classList.add("hide");
   while (answerButtonsEl.firstChild) {
     answerButtonsEl.removeChild(answerButtonsEl.firstChild);
   }
-}
+};
 
 function selectAnswer(e) {
   var selectedbutton = e.target;
@@ -98,32 +104,47 @@ function selectAnswer(e) {
     scoreButton.innerHTML = "Highscores";
     scoreButton.classList.remove("hide");
   }
-}
+};
 function setStatusClass(element, correct) {
   clearStatusClass(element);
   if (correct) {
     element.classList.add("correct");
+    sec = sec + 2;
   } else {
     element.classList.add("wrong");
-    
+    sec = sec - 1;
   }
-
-}
+  
+};
 function clearStatusClass(element) {
   element.classList.remove("correct");
   element.classList.remove("wrong");
-}
+};
 
 function timer() {
-  var sec = 10;
   var timer = setInterval(function () {
     document.getElementById("time-readout").innerHTML = "Time Left:" + sec;
     sec--;
     if (sec < 0) {
       clearInterval(timer);
     }
+    if(currentQuestion === questions.length - 1){
+      clearInterval(timer);
+    }
   }, 1000);
+};
+function scorePage(){
+    questionContainerEl.classList.add("hide");
+    scoreInput.classList.remove("hide");
+    submitButton.classList.remove("hide");
+    scoreBoard.classList.remove("hide");
+    localStorage.setItem("score", JSON.stringify(sec));
+    scoreBoard.innerText = localStorage.getItem("score");
 }
+
+
+
+scoreButton.addEventListener("click", scorePage)
 nextButton.addEventListener("click", () => {
   currentQuestion++;
   setNextQuestion();
