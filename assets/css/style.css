@@ -47,3 +47,9 @@ body{
 .hide{
     display: none;
 }
+#score-board{
+    font-size: xx-large;
+    margin-left: 12px;
+    margin-bottom: 95px;
+
+}
