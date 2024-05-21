@@ -54,7 +54,8 @@ var questions = [
     ]
   }
 ];
-console.log(questions);
+
+//starting the quiz through this startGame function seems sound, but may still need editting
 function startGame() {
   startButton.classList.add("hide");  //60-62 calls defines the function to start the game, hides the start buttton, and calls the function for the timer to begin
   timer();
@@ -63,12 +64,12 @@ function startGame() {
   questionContainerEl.classList.remove("hide");
   setNextQuestion();
 };
-
+//unsure this needs to be its own function, seems as if it could be rolled into another
 function setNextQuestion() {
   resetState();                                   //69-71 clears the previous question from the page and determines which question will be displayed next
   showQuestion(nextQuestion[currentQuestion]);
-  
 };
+//This function seems particularly messy, will need a thorough look
 function showQuestion(question) {
   questionEl.innerText = question.question; //74-79 determines what content will displayed for each question and answer, aswell as creates buttons that content will be displayed in
   question.answers.forEach((answer) => {                        
@@ -82,6 +83,7 @@ function showQuestion(question) {
     answerButtonsEl.appendChild(button);//appends button(defined on line 77) to the container
   });
 };
+//unsure this needs to be its own function, seems as if it could be rolled into another
 function resetState() {
   nextButton.classList.add("hide"); //hides next button after click
   while (answerButtonsEl.firstChild) {
@@ -103,6 +105,7 @@ function selectAnswer(e) {
     scoreButton.classList.remove("hide");
   }
 };
+
 function setStatusClass(element, correct) {
   clearStatusClass(element);
   if (correct) {
@@ -114,6 +117,7 @@ function setStatusClass(element, correct) {
   }
   
 };
+//unsure this needs to be its own function, seems as if it could be rolled into another
 function clearStatusClass(element) {
   element.classList.remove("correct");    //these lines remove the previously written correct/wrong response upon sumbition of another question response
   element.classList.remove("wrong");
@@ -146,3 +150,8 @@ nextButton.addEventListener("click", () => {
   setNextQuestion();
 });
 startButton.addEventListener("click", startGame); //calls startGame function on a click
+
+//when timer reaches zero the app will still allow the user to finish the quiz.
+//can recieve negative scores on the highscore board
+//highscores do not save between sessions, previous repo's code could have something that helps
+//lots of confusion on variables and function names, often being too similar for ease-of-understanding
