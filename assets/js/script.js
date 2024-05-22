@@ -1,38 +1,38 @@
-var startButton = document.getElementById("start-btn");
-var scoreButton = document.getElementById("score-btn");
-var nextButton = document.getElementById("next-btn");
-var questionContainerEl = document.getElementById("question-container");
-var nextQuestion, currentQuestion;//returns null, letting these values be defined later in the doc
-var questionEl = document.getElementById("question");
-var answerButtonsEl = document.getElementById("answer-buttons");
-var sec = 40;
-var scoreBoard = document.getElementById("score-board");
-var questions = [
+let startButton = document.getElementById("start-btn");
+let scoreButton = document.getElementById("score-btn");
+let nextButton = document.getElementById("next-btn");
+let questionContainerEl = document.getElementById("question-container");
+let nextQuestion, currentQuestion;//returns null, letting these values be defined later in the doc
+let questionEl = document.getElementById("question");
+let answerButtonsEl = document.getElementById("answer-buttons");
+let sec = 40;
+let scoreBoard = document.getElementById("score-board");
+let questions = [
   {
     question: "What is a pseudo-class?",
     answers: [
       { option: "A CSS keyword to target an element's state.", correct: true },
       { option: "A CSS declaration that hides the element.", correct: false },
       { option: "A financial class in society that isn't well defined.", correct: false },
-      { option: "Uhhhh...kinda germ??", correct: false }
+      { option: "Uhhhh... a kinda germ??", correct: false }
     ]
   },
   {
     question: "What is the purpose of the alt attribute for images?",
     answers: [
-      { option: "To make it easier to style the image with CSS", correct: false },
-      { option: "Give your image a grungy, punk-like filter", correct: false },
-      { option: "To provide context for the image", correct: true },
-      { option: "Alters the image with provided parameters", correct: false }
+      { option: "To make it easier to style the image with CSS.", correct: false },
+      { option: "To give your image a grungy, punk-like filter.", correct: false },
+      { option: "To provide context for the image.", correct: true },
+      { option: "To alter the image with provided parameters.", correct: false }
     ]
   },
   {
     question: "What is the preferred way to include or link another file in programming?",
     answers: [
-      { option: "Relative pathing", correct: true },
-      { option: "Through the browser", correct: false },          //Questions + Answers arrays
-      { option: "Absolute pathing", correct: false },
-      { option: "Filing is for interns...get one of them to do it", correct: false }
+      { option: "Relative pathing.", correct: true },
+      { option: "Through the browser.", correct: false },          //Questions + Answers objects
+      { option: "Absolute pathing.", correct: false },
+      { option: "Filing is for interns... get one of them to do it.", correct: false }
     ]
   },
   {
@@ -45,11 +45,11 @@ var questions = [
     ]
   },
   {
-    question: "Which of the following is NOT a reason to validate a user's responses?",
+    question: "Which of the following is >NOT< a reason to validate a user's responses?",
     answers: [
       { option: "Increases the overall quality of the user data.", correct: false },
-      { option: "When their rude and a jerk.", correct: true },
-      { option: "Reduces bogus answers getting stored in the database.", correct: false },
+      { option: "When they're rude and a jerk.", correct: true },
+      { option: "Reduces inaccurate answers getting stored in the database.", correct: false },
       { option: "Offers the user an opportunity to enter a correct response.", correct: false }
     ]
   }
@@ -71,9 +71,9 @@ function setNextQuestion() {
 };
 //This function seems particularly messy, will need a thorough look
 function showQuestion(question) {
-  questionEl.innerText = question.question; //74-79 determines what content will displayed for each question and answer, aswell as creates buttons that content will be displayed in
+  questionEl.innerText = question.question; //confusing line, but does accurately target a given question within the questions array
   question.answers.forEach((answer) => {                        
-    var button = document.createElement("button");
+    let button = document.createElement("button");
     button.innerText = answer.option;
     button.classList.add("btn");
     if (answer.correct) {
@@ -91,57 +91,35 @@ function resetState() {
   }
 };
 
-function selectAnswer(e) {
-  var selectedbutton = e.target; //93-95 informs the function to which button you clicked, if that selection is correct, and writes the class of the selection to the body
-  var correct = selectedbutton.dataset.correct; 
-  setStatusClass(document.body, correct);
-  Array.from(answerButtonsEl.children).forEach((button) => { //this line and the one below it loops through our other buttons
-    setStatusClass(button, button.dataset.correct);
-  });
+function selectAnswer() {
   if (nextQuestion.length > currentQuestion + 1) {  //99-103 determines if the next button or the highscore button should be displayed based off of the place in the array
     nextButton.classList.remove("hide");
   } else {
     scoreButton.innerHTML = "Highscores";
     scoreButton.classList.remove("hide");
+    // document.getElementById(`time-readout`).classList.add(`hide`); may use this line to remove the timer display on displaying the highscore button
   }
-};
-
-function setStatusClass(element, correct) {
-  clearStatusClass(element);
-  if (correct) {
-    element.classList.add("correct");       //107-113 determines the actual class that the given response will write from line 95, and decrements the timer if a wrong answer is given
-    sec = sec + 2;
-  } else {
-    element.classList.add("wrong");
-    sec = sec - 1;
-  }
-  
-};
-//unsure this needs to be its own function, seems as if it could be rolled into another
-function clearStatusClass(element) {
-  element.classList.remove("correct");    //these lines remove the previously written correct/wrong response upon sumbition of another question response
-  element.classList.remove("wrong");
 };
 
 function timer() {
-  var timer = setInterval(function () {
-    document.getElementById("time-readout").innerHTML = "Time Left:" + sec; //this line determines the text of the timer, the rest down to line 132 is the timer itself
+  setInterval(function () {
+    document.getElementById("time-readout").innerHTML = `Time left: ${sec}`; //this line determines the text of the timer, the rest down to line 132 is the timer itself
     sec--;
-    if (sec < 0) {
-      clearInterval(timer);
-    }
-    if(currentQuestion === questions.length - 1){
-      clearInterval(timer);
-    }
+    // if (sec < 0) {
+    //   clearInterval(timer);
+    // }
+    // if(currentQuestion === questions.length - 1){
+    //   clearInterval(timer);
+    // }
   }, 1000);
 };
+//will need to create a container for saving previous scores, so as to load them upon displaying scoreboard
 function scorePage(){
     questionContainerEl.classList.add("hide");                  //135-138 hides the questions+answers, displays the score, and the text for the score
     scoreBoard.classList.remove("hide");
     localStorage.setItem("score", JSON.stringify(sec));
-    scoreBoard.innerText = "Your score:" + localStorage.getItem("score");
-}
-
+    scoreBoard.innerText = `Your score: ${sec + 1}`;
+};
 
 
 scoreButton.addEventListener("click", scorePage) //calls scorePage function on a click
@@ -152,6 +130,30 @@ nextButton.addEventListener("click", () => {
 startButton.addEventListener("click", startGame); //calls startGame function on a click
 
 //when timer reaches zero the app will still allow the user to finish the quiz.
-//can recieve negative scores on the highscore board
 //highscores do not save between sessions, previous repo's code could have something that helps
 //lots of confusion on variables and function names, often being too similar for ease-of-understanding
+//current version of quiz only records score as quickness of user, does not disincetivize selecting wrong answers
+
+//below is a possible quick-ref on how to impliment score-saving via methods on a different repo
+// let saveTasks = function() {
+//   localStorage.setItem("tasks", JSON.stringify(tasks));//stringify converts an array into a number
+// }
+// let loadTasks = function() {
+//   let savedTasks = localStorage.getItem("tasks"); //this variable here allows us to save added tasks between sessions
+//   // if there are no tasks, set tasks to an empty array and return out of the function
+//   if (!savedTasks) {
+//     return false;
+//   }
+//   console.log("Saved tasks found!");
+//   // else, load up saved tasks
+
+//   // parse into array of objects
+//   savedTasks = JSON.parse(savedTasks);//parse converts a number back into an array
+
+//   // loop through savedTasks array
+//   for (let i = 0; i < savedTasks.length; i++) {
+//     // pass each task object into the `createTaskEl()` function
+//     createTaskEl(savedTasks[i]);
+//     console.log(tasks[i]);
+//   }
+// };
