@@ -2,10 +2,10 @@ let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
 let nextButton = document.getElementById("next-btn");
 let questionContainerEl = document.getElementById("question-container");
-let nextQuestion, currentQuestion;//returns null, letting these values be defined later in the doc
+let nextQuestion, currentQuestion;
 let questionEl = document.getElementById("question");
 let answerButtonsEl = document.getElementById("answer-buttons");
-let sec = 40;
+let sec = 8;
 let scoreBoard = document.getElementById("score-board");
 let questions = [
   {
@@ -30,7 +30,7 @@ let questions = [
     question: "What is the preferred way to include or link another file in programming?",
     answers: [
       { option: "Relative pathing.", correct: true },
-      { option: "Through the browser.", correct: false },          //Questions + Answers objects
+      { option: "Through the browser.", correct: false },
       { option: "Absolute pathing.", correct: false },
       { option: "Filing is for interns... get one of them to do it.", correct: false }
     ]
@@ -55,83 +55,84 @@ let questions = [
   }
 ];
 
-//starting the quiz through this startGame function seems sound, but may still need editting
+//starting the quiz through this startGame function seems sound
 function startGame() {
-  startButton.classList.add("hide");  //60-62 calls defines the function to start the game, hides the start buttton, and calls the function for the timer to begin
+  startButton.classList.add("hide");
   timer();
-  nextQuestion = questions.sort(() => Math.random() - 0.5);
-  currentQuestion = 0;                                    //63-66 randomizes question order and calls the function to generate the next question
+  nextQuestion = questions.sort(() => Math.random());
+  currentQuestion = 0;
   questionContainerEl.classList.remove("hide");
   setNextQuestion();
 };
-//unsure this needs to be its own function, seems as if it could be rolled into another
+
 function setNextQuestion() {
-  resetState();                                   //69-71 clears the previous question from the page and determines which question will be displayed next
+  nextButton.classList.add("hide"); //hides next button after click
+  while (answerButtonsEl.firstChild) {
+    answerButtonsEl.removeChild(answerButtonsEl.firstChild); //while loop goes through the children of our answer elements
+  }
   showQuestion(nextQuestion[currentQuestion]);
 };
-//This function seems particularly messy, will need a thorough look
+
 function showQuestion(question) {
   questionEl.innerText = question.question; //confusing line, but does accurately target a given question within the questions array
   question.answers.forEach((answer) => {                        
     let button = document.createElement("button");
     button.innerText = answer.option;
     button.classList.add("btn");
-    if (answer.correct) {
-      button.dataset.correct = answer.correct;//if loop checks if answer is correct by assigning a data attribute to the correct input
-    }                                               
-    button.addEventListener("click", selectAnswer);//event listener links directly to line 94
-    answerButtonsEl.appendChild(button);//appends button(defined on line 77) to the container
+    // if (answer.correct) {
+    //   button.dataset.correct = answer.correct;
+    // }   I believe this had previously determined if a selected answer was correct or not, not sure if needed                          
+    button.addEventListener("click", selectAnswer);
+    answerButtonsEl.appendChild(button);
   });
-};
-//unsure this needs to be its own function, seems as if it could be rolled into another
-function resetState() {
-  nextButton.classList.add("hide"); //hides next button after click
-  while (answerButtonsEl.firstChild) {
-    answerButtonsEl.removeChild(answerButtonsEl.firstChild); //while loop goes through the children of our answer elements
-  }
 };
 
 function selectAnswer() {
-  if (nextQuestion.length > currentQuestion + 1) {  //99-103 determines if the next button or the highscore button should be displayed based off of the place in the array
+  if (nextQuestion.length > currentQuestion + 1) {
     nextButton.classList.remove("hide");
   } else {
     scoreButton.innerHTML = "Highscores";
     scoreButton.classList.remove("hide");
-    // document.getElementById(`time-readout`).classList.add(`hide`); may use this line to remove the timer display on displaying the highscore button
+    document.getElementById(`time-readout`).classList.add(`hide`); //removes the timer display on displaying the highscore button
   }
 };
 
 function timer() {
-  setInterval(function () {
-    document.getElementById("time-readout").innerHTML = `Time left: ${sec}`; //this line determines the text of the timer, the rest down to line 132 is the timer itself
-    sec--;
-    // if (sec < 0) {
-    //   clearInterval(timer);
-    // }
-    // if(currentQuestion === questions.length - 1){
-    //   clearInterval(timer);
-    // }
+  const timeCount = setInterval(function () {
+    document.getElementById("time-readout").innerHTML = `Time left: ${sec}`;
+    
+    if (sec > 0) {
+      sec--;
+    }else{
+      clearInterval(timeCount);
+    }
+
+    if(currentQuestion === questions.length - 1){
+      clearInterval(timeCount);
+    }
+
   }, 1000);
 };
 //will need to create a container for saving previous scores, so as to load them upon displaying scoreboard
+//will need to create a system which rewards/penalizes score off of right/wrong answers, rather than just time
 function scorePage(){
-    questionContainerEl.classList.add("hide");                  //135-138 hides the questions+answers, displays the score, and the text for the score
+    questionContainerEl.classList.add("hide");
     scoreBoard.classList.remove("hide");
     localStorage.setItem("score", JSON.stringify(sec));
     scoreBoard.innerText = `Your score: ${sec + 1}`;
 };
 
+scoreButton.addEventListener("click", scorePage);
 
-scoreButton.addEventListener("click", scorePage) //calls scorePage function on a click
 nextButton.addEventListener("click", () => {
-  currentQuestion++;                            //iterates the question array and calls setNextQuestion function on a click
+  currentQuestion++;
   setNextQuestion();
 });
-startButton.addEventListener("click", startGame); //calls startGame function on a click
+
+startButton.addEventListener("click", startGame);
 
 //when timer reaches zero the app will still allow the user to finish the quiz.
 //highscores do not save between sessions, previous repo's code could have something that helps
-//lots of confusion on variables and function names, often being too similar for ease-of-understanding
 //current version of quiz only records score as quickness of user, does not disincetivize selecting wrong answers
 
 //below is a possible quick-ref on how to impliment score-saving via methods on a different repo
