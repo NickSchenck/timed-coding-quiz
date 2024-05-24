@@ -1,12 +1,38 @@
+//variables for targeting specific elements within the DOM, from the timer itself to the disappearing-on-click
+//start button
 let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
 let nextButton = document.getElementById("next-btn");
 let questionContainerEl = document.getElementById("question-container");
-let nextQuestion, currentQuestion;
 let questionEl = document.getElementById("question");
 let answerButtonsEl = document.getElementById("answer-buttons");
-let sec = 8;
 let scoreBoard = document.getElementById("score-board");
+
+//a variable for storing time and two initialized variables to act as generic containers that are convinient to
+//assign value as the app progresses
+let sec = 8;
+let nextQuestion, currentQuestion;
+
+//this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was
+//taken from: https://bost.ocks.org/mike/shuffle/
+//The old shuffling method used was this: /*questions.sort(() => Math.random() - 0.5)*/
+//which apparently is inefficient and not totally random, but was alright for smaller arrays
+function shuffle(array) {
+  let m = array.length, t, i;
+  // While there remain elements to shuffle…
+  while (m) {
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * m--);
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+  return array;
+}
+
+
+//An array containing several objects formatted as questions, to be populated as the quiz is progressed
 let questions = [
   {
     question: "What is a pseudo-class?",
@@ -55,16 +81,24 @@ let questions = [
   }
 ];
 
-//starting the quiz through this startGame function seems sound
+//app is started through an event listener which calls this function. startGame first calls the timer, hides the
+//start button after the user has clicked it, and removes the 'hide' class from questionContainerEl which makes
+//it visible. The container variable nextQuestion is initialized with a value that calls our randomize function
+//on the array of questions, and currentQuestion is given a value of 0 to ensure we start at the beginning of our 
+//now randomized nextQuestion array, when we call the function setNextQuestion.
 function startGame() {
-  startButton.classList.add("hide");
   timer();
-  nextQuestion = questions.sort(() => Math.random());
-  currentQuestion = 0;
+  startButton.classList.add("hide");
   questionContainerEl.classList.remove("hide");
+  nextQuestion = shuffle(questions);
+  currentQuestion = 0;
   setNextQuestion();
 };
 
+//setNextQuestion first hides the nextButton, after the element has been clicked. We enter a while loop which
+//checks if the provided argument is truthy, and if so prevents the empty buttons from our html file from
+//generating alongside our actual answer buttons. We then call showQuestion with the argument of nextQuestion-
+//our randomized array of questions- at an index of currentQuestion.
 function setNextQuestion() {
   nextButton.classList.add("hide"); //hides next button after click
   while (answerButtonsEl.firstChild) {
@@ -73,17 +107,22 @@ function setNextQuestion() {
   showQuestion(nextQuestion[currentQuestion]);
 };
 
-function showQuestion(question) {
-  questionEl.innerText = question.question; //confusing line, but does accurately target a given question within the questions array
-  question.answers.forEach((answer) => {                        
+//showQuestion first manipulates the text of questionEl by targeting the questions parameter passed to the function
+//and appending the value of question onto it from the object array(questions => question => answers => option).
+//We then target the answers property of the param, putting it through a forEach loop. The forEach loop creates a
+//button for each of the given answer.option values and adds a class of 'btn' to them. Finally, an event listener
+//is attached to button, activating on a click and calling the selectAnswer function.
+function showQuestion(questions) {
+  questionEl.innerText = questions.question; //confusing line, but does accurately target a given question within the questions array
+  questions.answers.forEach((answer) => {                        
     let button = document.createElement("button");
     button.innerText = answer.option;
+    answerButtonsEl.appendChild(button);
     button.classList.add("btn");
     // if (answer.correct) {
     //   button.dataset.correct = answer.correct;
     // }   I believe this had previously determined if a selected answer was correct or not, not sure if needed                          
     button.addEventListener("click", selectAnswer);
-    answerButtonsEl.appendChild(button);
   });
 };
 
@@ -158,3 +197,6 @@ startButton.addEventListener("click", startGame);
 //     console.log(tasks[i]);
 //   }
 // };
+
+//Note: the fisher-yates method of shuffling is apparently very efficent, but I cannot seem to figure out how to
+//impliment it within this app
