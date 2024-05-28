@@ -8,11 +8,12 @@ let questionContainerEl = document.getElementById("question-container");
 let questionEl = document.getElementById("question");
 let answerButtonsEl = document.getElementById("answer-buttons");
 let scoreBoard = document.getElementById("score-board");
+let controls = document.getElementById("controls");
 
 //sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
 //generic containers that will be assigned value as the app progresses.
 let sec = 8;
-let nextQuestion, currentQuestion;
+let nextQuestion, currentQuestion, userScore;
 
 //this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was
 //taken from: https://bost.ocks.org/mike/shuffle/
@@ -93,6 +94,7 @@ function startGame() {
   startButton.classList.add("hide");
   questionContainerEl.classList.remove("hide");
   nextQuestion = shuffle(questions);
+  // console.log(questions[4].answers[3].correct); //This is how I will target the true/false boolean value of the correct property
   currentQuestion = 0;
   setNextQuestion();
 };
@@ -107,6 +109,7 @@ function setNextQuestion() {
     answerButtonsEl.removeChild(answerButtonsEl.firstChild);
   };
   showQuestion(nextQuestion[currentQuestion]);
+  
 };
 
 //showQuestion first manipulates the text of questionEl variable by targeting the array parameter passed to the function
@@ -138,26 +141,39 @@ function showQuestion(array) {
 //determine its text, making the Highscore button visible. It will also add the class of 'hide' to an element with an Id of
 //'time-readout' which makes the timer not visible.
 function selectAnswer() {
+  let userScore = 0;
+
   if (nextQuestion.length > currentQuestion + 1) {
     nextButton.classList.remove("hide");
   } else {
     scoreButton.classList.remove("hide");
     scoreButton.innerHTML = "Highscores";
     document.getElementById(`time-readout`).classList.add(`hide`);
-  }
+  };
+
+  for(let i = 0; i < nextQuestion.length; i++){
+    for(let j = 0; j < nextQuestion[i].answers.length; j++){
+      if(nextQuestion[i].answers[j].correct === true){
+        userScore += 10;
+      }else{
+        userScore -= 10;
+      }
+      console.log(`userScore`,userScore);
+    };
+  };
 };
 
-//The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function,
-//ensuring the user is immediatly timed upon beginning the quiz. First, we make a variable of timeCount which is used to call
-//setInterval. The first argument of setInterval is a nameless function; this function selects an element with an Id of
-//'time-readout' and gives it the text of 'Time left:' with a template literal of ${sec}, which allows the countdown to
-//dynamically update as time passes. We then enter an if statement that checks if sec IS GREATER THAN 0(checking if we've
-//ran out of time) and decrements sec if it is greater than zero. If sec is NOT GREATER than 0, we call clearInterval with an
-//argument of timeCount- clearInterval being a built-in tool of setInterval which will interrupt its typical process(in this
-//case, decrementing sec). We also have a secondary if statement that checks if currentQuestion evaluates to the same number
-//as questions.length - 1(which would mean the user has reached the end of our quiz), and if so also calls clearInterval with
-//an argument of timeCount. Finally, we have setIntervals second argument- after the curly brace with a comma- 1000, which is
-//a measurment of milliseconds we'd like the setInterval function to delay itself by(evaluating to a 1 second passage of time).
+/*The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function,
+ensuring the user is immediatly timed upon beginning the quiz. First, we make a variable of timeCount which is used to call
+setInterval. The first argument of setInterval is a nameless function; this function selects an element with an Id of
+'time-readout' and gives it the text of 'Time left:' with a template literal of ${sec}, which allows the countdown to
+dynamically update as time passes. We then enter an if statement that checks if sec IS GREATER THAN 0(checking if we've
+ran out of time) and decrements sec if it is greater than zero. If sec is NOT GREATER than 0, we call clearInterval with an
+argument of timeCount- clearInterval being a built-in tool of setInterval which will interrupt its typical process(in this
+case, decrementing sec). We also have a secondary if statement that checks if currentQuestion evaluates to the same number
+as questions.length - 1(which would mean the user has reached the end of our quiz), and if so also calls clearInterval with
+an argument of timeCount. Finally, we have setIntervals second argument- after the curly brace with a comma- 1000, which is
+a measurment of milliseconds we'd like the setInterval function to delay itself by(evaluating to a 1 second passage of time).*/
 function timer() {
   const timeCount = setInterval(function () {
     document.getElementById("time-readout").innerHTML = `Time left: ${sec}`;
@@ -166,6 +182,11 @@ function timer() {
       sec--;
     }else{
       clearInterval(timeCount);
+      questionContainerEl.classList.add("hide");
+      controls.classList.add("hide");
+      scoreButton.classList.remove("hide");
+      scoreButton.innerHTML = "Highscores";
+      document.getElementById(`time-readout`).classList.add(`hide`);
     }
 
     if(currentQuestion === questions.length - 1){
