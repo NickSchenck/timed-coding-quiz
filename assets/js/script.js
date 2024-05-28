@@ -131,6 +131,14 @@ function showQuestion(array) {
     //   button.dataset.correct = answer.correct;
     // }   I believe this had previously determined if a selected answer was correct or not, not sure if needed here                         
     button.addEventListener("click", selectAnswer);
+    button.addEventListener('click', isCorrect); //this should work in calling the function manipulating userScore
+    if(answer.correct === true){
+      console.log(true)
+    }else{
+      console.log(false)
+    }
+    console.log(answer) //This logs as an object with the correct:false/correct:true values Im looking for, and the if() above
+    //correctly logs true when and answer is correct and false when an answer is incorrect
   });
 };
 
@@ -141,7 +149,7 @@ function showQuestion(array) {
 //determine its text, making the Highscore button visible. It will also add the class of 'hide' to an element with an Id of
 //'time-readout' which makes the timer not visible.
 function selectAnswer() {
-  let userScore = 0;
+  
 
   if (nextQuestion.length > currentQuestion + 1) {
     nextButton.classList.remove("hide");
@@ -151,17 +159,25 @@ function selectAnswer() {
     document.getElementById(`time-readout`).classList.add(`hide`);
   };
 
+  
+};
+
+function isCorrect(event){
+  userScore = 0;
+
   for(let i = 0; i < nextQuestion.length; i++){
     for(let j = 0; j < nextQuestion[i].answers.length; j++){
-      if(nextQuestion[i].answers[j].correct === true){
+      if(event.target/*.nextQuestion[i].answers[j].correct === true*/){
         userScore += 10;
       }else{
         userScore -= 10;
       }
-      console.log(`userScore`,userScore);
+      // console.log(`userScore`,event.target); //We will need a some sort of event.target in order to actually capture the
+      //button being clicked
     };
   };
-};
+  console.log(event.target);
+}
 
 /*The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function,
 ensuring the user is immediatly timed upon beginning the quiz. First, we make a variable of timeCount which is used to call
