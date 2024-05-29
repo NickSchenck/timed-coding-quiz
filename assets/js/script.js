@@ -165,16 +165,15 @@ function selectAnswer() {
 function isCorrect(event){
   userScore = 0;
 
-  for(let i = 0; i < nextQuestion.length; i++){
-    for(let j = 0; j < nextQuestion[i].answers.length; j++){
-      if(event.target/*.nextQuestion[i].answers[j].correct === true*/){
-        userScore += 10;
-      }else{
-        userScore -= 10;
-      }
-      // console.log(`userScore`,event.target); //We will need a some sort of event.target in order to actually capture the
-      //button being clicked
-    };
+  for(let j = 0; j < nextQuestion[j].answers.length; j++){
+    if(nextQuestion[currentQuestion].answers[j].correct === true
+      /* &&
+    nextQuestion[i].answers[j].correct === true*/){
+      userScore += 10;
+    }else{
+      userScore -= 10;
+    }
+    console.log(`userScore`,userScore);
   };
   console.log(event.target);
 }
