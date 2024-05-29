@@ -1,6 +1,6 @@
-//variables for targeting specific elements within the DOM. In order startButton, scoreButton, nextButton,
-//questionContainerEl, questionEl, answerButtonsEl, and scoreBoard all select elements with varrying Ids
-//that roughly equate to the name of their variable counterpart.
+/*variables for targeting specific elements within the DOM. In order startButton, scoreButton, nextButton,
+questionContainerEl, questionEl, answerButtonsEl, scoreBoard, and controls all select elements with varrying Ids
+that roughly equate to the name of their variable counterpart.*/
 let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
 let nextButton = document.getElementById("next-btn");
@@ -10,15 +10,18 @@ let answerButtonsEl = document.getElementById("answer-buttons");
 let scoreBoard = document.getElementById("score-board");
 let controls = document.getElementById("controls");
 
-//sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
-//generic containers that will be assigned value as the app progresses.
+/*sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
+generic containers that will be assigned value as the app progresses. userScore is a variable initialized to 0,
+which will be iterated or decremented upon if the user answers each question correctly or incorrectly, or
+decremented if the user runs out of time.*/
 let sec = 8;
-let nextQuestion, currentQuestion, userScore;
+let nextQuestion, currentQuestion;
+let userScore = 0;
 
-//this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was
-//taken from: https://bost.ocks.org/mike/shuffle/
-//The old shuffling method used was this: /*questions.sort(() => Math.random() - 0.5)*/
-//which apparently is inefficient and not totally random, but was alright for smaller arrays
+/*this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was
+taken from: https://bost.ocks.org/mike/shuffle/
+The old shuffling method used was this: questions.sort(() => Math.random() - 0.5)
+which apparently is inefficient and not totally random, but was alright for smaller arrays*/
 function shuffle(array) {
   let m = array.length, t, i;
   // While there remain elements to shuffle
@@ -33,9 +36,9 @@ function shuffle(array) {
   return array;
 }
 
-//questions is an array containing several objects formatted as questions. Each object is
-//denoted by the curly-brace containing the individual question to the curly-brace just under
-//the answers property array.
+/*questions is an array containing several objects formatted as questions. Each object is
+denoted by the curly-brace containing the individual question to the curly-brace just under
+the answers property array.*/
 let questions = [
   {
     question: "What is a pseudo-class?",
@@ -84,99 +87,97 @@ let questions = [
   }
 ];
 
-//app is started through a click event listener which calls this function. startGame first calls the timer function,
-//uses the startButton variable to add a class of 'hide' to an element, and removes the 'hide' class from
-//questionContainerEl which makes its element visible. The container variable nextQuestion is initialized with a value
-//that calls our shuffle function on the array of questions, and currentQuestion is given a value of 0, which ensures
-//we will start at the beginning of our now randomized nextQuestion array, when we call the function setNextQuestion.
+/*app is started through a click event listener which calls this function. startGame first calls the timer function,
+uses the startButton variable to add a class of 'hide' to its element, and removes the 'hide' class from
+questionContainerEl which makes its element visible. The container variable nextQuestion is initialized with a value
+that calls our shuffle function on the array of questions, and currentQuestion is given a value of 0, which ensures
+we will start at the beginning of our now randomized nextQuestion array, when we call the function setupNextQuestion.*/
 function startGame() {
   timer();
   startButton.classList.add("hide");
   questionContainerEl.classList.remove("hide");
   nextQuestion = shuffle(questions);
-  // console.log(questions[4].answers[3].correct); //This is how I will target the true/false boolean value of the correct property
   currentQuestion = 0;
-  setNextQuestion();
+  setupNextQuestion();
 };
 
-//setNextQuestion first uses the nextButton variable to add a class of 'hide' to its element. Then we enter a while loop
-//which checks if the provided argument is truthy, and if so prevents the empty buttons from our html file from
-//generating. We then call the showQuestion function with the argument of nextQuestion- our randomized array of questions-
-//at an index of currentQuestion(initialized as 0 in the startGame function).
-function setNextQuestion() {
+/*setupNextQuestion first uses the nextButton variable to add a class of 'hide' to its element. Then we enter a while loop
+which checks if the provided argument is truthy, and if so prevents the empty buttons from our html file from
+generating. We then call the generateQuestion function with the argument of nextQuestion- our randomized array of questions-
+at an index of currentQuestion(initialized as 0 in the startGame function).*/
+function setupNextQuestion() {
   nextButton.classList.add("hide");
   while (answerButtonsEl.firstChild) {
     answerButtonsEl.removeChild(answerButtonsEl.firstChild);
   };
-  showQuestion(nextQuestion[currentQuestion]);
-  
+  generateQuestion(nextQuestion[currentQuestion]);
 };
 
-//showQuestion first manipulates the text of questionEl variable by targeting the array parameter passed to the function
-//and appending the value of question onto it from the object array(questions => question => answers => option). We then
-//target the answers property of the object array, putting it through a forEach loop. The forEach loop creates a button
-//variable- which creates a button element- for each answer in array.answers. It targets the text of each button with
-//answer.option, populating each button element with each avaliable option property, and appends the button variable onto
-//the answerButtonsEl variable, creating a button for each of the given answer.option values. A class of 'btn' is added to
-//each button variable appended. Finally, an event listener is attached to the button variable, activating on a click and
-//calling the selectAnswer function.
-function showQuestion(array) {
+/*generateQuestion first manipulates the text of questionEl variable by targeting the array parameter passed to the function
+and appending the value of question onto it from the object array. We then target the answers property of the object array,
+putting it through a forEach loop. The forEach loop creates a button variable- which will create a button element- for each
+answer in array.answers. It targets the text of each button with answer.option, populating each button element with each
+avaliable option property, and appends the button variable onto the answerButtonsEl variable, creating a button for each
+of the given answer.option values. A class of 'btn' is added to each button variable appended. Two event listeners are
+attached to the button variable, activating on a click and calling the answerSelected function and isCorrect function.*/
+function generateQuestion(array) {
   questionEl.innerText = array.question;
   array.answers.forEach((answer) => {                        
     let button = document.createElement("button");
     button.innerText = answer.option;
     answerButtonsEl.appendChild(button);
     button.classList.add("btn");
-    // if (answer.correct) {
-    //   button.dataset.correct = answer.correct;
-    // }   I believe this had previously determined if a selected answer was correct or not, not sure if needed here                         
-    button.addEventListener("click", selectAnswer);
-    button.addEventListener('click', isCorrect); //this should work in calling the function manipulating userScore
-    if(answer.correct === true){
-      console.log(true)
-    }else{
-      console.log(false)
-    }
-    console.log(answer) //This logs as an object with the correct:false/correct:true values Im looking for, and the if() above
-    //correctly logs true when and answer is correct and false when an answer is incorrect
+    button.addEventListener("click", answerSelected);
+    button.addEventListener('click', isCorrect);
   });
 };
 
-//selectAnswer checks if the length of the nextQuestion array(which is 5) IS GREATER THAN the number which currentQuestion
-//evaluates to + 1. If nextQuestion.length is greater, then it will remove the class of 'hide' from the nextButton element,
-//making it visible. If nextQuestion.length is NOT GREATER than currentQuestion + 1(which will happen once the user has
-//reached the end of our array of questions), it will instead remove the class of 'hide' from the scoreButton variable and
-//determine its text, making the Highscore button visible. It will also add the class of 'hide' to an element with an Id of
-//'time-readout' which makes the timer not visible.
-function selectAnswer() {
-  
-
+/*answerSelected checks if the length of the nextQuestion array(which is 5) IS GREATER THAN the number which currentQuestion
+evaluates to + 1(nextQuestion is an array, arrays are 0 indexed). If nextQuestion.length is greater, then it will remove
+the class of 'hide' from the nextButton element, making it visible. If nextQuestion.length is NOT GREATER than
+currentQuestion + 1(which will happen once the user has reached the end of our array of questions), it will instead remove
+the class of 'hide' from the scoreButton variable and determine its text, making the Highscore button visible. It will also
+add the class of 'hide' to an element with an Id of 'time-readout' which makes the timer not visible.*/
+function answerSelected() {
   if (nextQuestion.length > currentQuestion + 1) {
     nextButton.classList.remove("hide");
   } else {
     scoreButton.classList.remove("hide");
-    scoreButton.innerHTML = "Highscores";
     document.getElementById(`time-readout`).classList.add(`hide`);
   };
-
-  
 };
 
+/*isCorrect first sets-up the variable answerText, for holding the target.innerHTML of the event parameter(this evaluates to
+what HTML is within a clicked answer button). We then enter a for loop, where we initialize the variable i, check it against
+the length of our answers array at an index of our nextQuestion variable, and iterate the i variable if it is LESS THAN that
+check. We then enter an if statement that checks if our answerText variable evaluates to a given option property within our
+answers array at an index, within our nextQuestion array at an index- AND(&&) we also check if the correct property of our
+answers array at an index, within our nextQuestion array at an index evaluates to TRUE(checking the value of the clicked
+button and if its correct property is true, meaning its a correct answer). If both these checks are passed, we iterate the
+userScore variable by 10, indicating a correctly-chosen answer. Then, we enter an else if statement that performs the first
+check verbatim, but inverts the second check; instead checking if the correct property within our answers array at an index,
+within our nextQuestion array at an index evaluates to FALSE(checking the value of the clicked button and if its correct
+property is false, meaning its an incorrect answer). If both these checks are passed we decrement the userScore variable by 10,
+indicating an incorrectly-chose answer.*/
 function isCorrect(event){
-  userScore = 0;
+  let answerText = event.target.innerHTML;
 
-  for(let j = 0; j < nextQuestion[j].answers.length; j++){
-    if(nextQuestion[currentQuestion].answers[j].correct === true
-      /* &&
-    nextQuestion[i].answers[j].correct === true*/){
+  for(let i = 0; i < nextQuestion[i].answers.length; i++){
+    if(answerText === nextQuestion[currentQuestion].answers[i].option 
+      &&
+      nextQuestion[currentQuestion].answers[i].correct === true){
       userScore += 10;
-    }else{
+    }else if(answerText === nextQuestion[currentQuestion].answers[i].option
+      &&
+      nextQuestion[currentQuestion].answers[i].correct === false){
       userScore -= 10;
-    }
-    console.log(`userScore`,userScore);
+    };
+    // console.log(nextQuestion[currentQuestion].answers[i].option)
   };
-  console.log(event.target);
-}
+    // console.log(`userScore`,userScore);
+  // console.log(nextQuestion[currentQuestion].answers[0].correct) //this accurately targets the true/false property
+  // console.log(event.target.innerHTML);
+};
 
 /*The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function,
 ensuring the user is immediatly timed upon beginning the quiz. First, we make a variable of timeCount which is used to call
@@ -200,9 +201,9 @@ function timer() {
       questionContainerEl.classList.add("hide");
       controls.classList.add("hide");
       scoreButton.classList.remove("hide");
-      scoreButton.innerHTML = "Highscores";
       document.getElementById(`time-readout`).classList.add(`hide`);
-    }
+      userScore -= 10;
+    } 
 
     if(currentQuestion === questions.length - 1){
       clearInterval(timeCount);
@@ -210,27 +211,30 @@ function timer() {
 
   }, 1000);
 };
-//will need to create a container for saving previous scores, so as to load them upon displaying scoreboard
-//will need to create a system which rewards/penalizes score off of right/wrong answers, rather than just time
+
+/*will need to create a container for saving previous scores, so as to load them upon displaying scoreboard. Function isnt
+complete, will write-up once we can save userScore in some way which allows it to be displayed*/
 function scorePage(){
     questionContainerEl.classList.add("hide");
     scoreBoard.classList.remove("hide");
-    localStorage.setItem("score", JSON.stringify(sec));
-    scoreBoard.innerText = `Your score: ${sec + 1}`;
+    // localStorage.setItem("score", JSON.stringify(sec)); didn't work, but was supposed to save score 
+    scoreBoard.innerText = `Your score: ${userScore}`;
 };
 
+/*Below we have three event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
+function. Second, the event listener on our nextButton variable calls an anonymous function which iterates our currentQuestion
+variable, and calls the setupNextQuestion function. Third, the event listener on our startButton variable allows us to call
+the startGame function.*/
 scoreButton.addEventListener("click", scorePage);
 
 nextButton.addEventListener("click", () => {
   currentQuestion++;
-  setNextQuestion();
+  setupNextQuestion();
 });
 
 startButton.addEventListener("click", startGame);
 
-//when timer reaches zero the app will still allow the user to finish the quiz.
 //highscores do not save between sessions, previous repo's code could have something that helps
-//current version of quiz only records score as quickness of user, does not disincetivize selecting wrong answers
 
 //below is a possible quick-ref on how to impliment score-saving via methods on a different repo
 // let saveTasks = function() {
