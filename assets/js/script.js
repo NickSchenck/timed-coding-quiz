@@ -1,5 +1,5 @@
 /*variables for targeting specific elements within the DOM. In order startButton, scoreButton, nextButton,
-questionContainerEl, questionEl, answerButtons, scoreBoard, and controls all select elements with varrying Ids
+questionContainerEl, questionEl, answerButtons, and scoreBoard all select elements with varrying Ids
 that roughly equate to the name/functionality of their variable counterpart.*/
 let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
@@ -8,12 +8,11 @@ let questionContainerEl = document.getElementById("question-container");
 let questionEl = document.getElementById("question");
 let answerButtons = document.getElementById("answer-buttons");
 let scoreBoard = document.getElementById("score-board");
-let controls = document.getElementById("controls");
 
 /*sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
 generic containers that will be assigned value as the app progresses. userScore is a variable initialized to 0,
-which will be iterated or decremented upon if the user answers each question correctly or incorrectly, or
-decremented if the user runs out of time.*/
+which will be iterated or decremented upon if the user answers each question correctly or incorrectly, decremented
+if the user runs out of time, and have any remaining time added to the users score if they finish the quiz early.*/
 let sec = 8;
 let nextQuestion, currentQuestion;
 let userScore = 0;
@@ -102,10 +101,9 @@ function startGame() {
 };
 
 /*setupNextQuestion first uses the nextButton variable to add a class of 'hide' to its element. Then we enter a while loop
-which checks if the provided argument is truthy, and if so prevents the empty buttons from our html file from
-generating and the previous array of answers from remaining rendered. We then call the generateQuestion function with the
-argument of nextQuestion- our randomized array of questions- at an index of currentQuestion(initialized as 0 in the startGame
-function).*/
+which checks if the provided argument is truthy, and if so prevents the previous array of answers from remaining rendered.
+We then call the generateQuestion function with the argument of nextQuestion- our randomized array of questions- at an index
+of currentQuestion(initialized as 0 in the startGame function).*/
 function setupNextQuestion() {
   nextButton.classList.add("hide");
 
@@ -118,11 +116,11 @@ function setupNextQuestion() {
 /*generateQuestion first manipulates the text of questionEl variable by targeting the array parameter passed to the function
 and appending the property of question onto it from the object array. We then call our shuffle function on(randomizing the
 order which answers are rendered), and target the answers property of the object array, putting it through a forEach loop.
-The forEach loop creates a button variable- which will create a button element- for each answer in array.answers. It targets
-the text of each button with answer.option, populating each button element with each avaliable option property, and appends
-the button variable onto the answerButtons variable, creating a button for each of the given answer.option values. A class of
-'btn' and 'disableBtn' is added to each button variable appended. Two event listeners are attached to the button variable,
-activating on a click and calling the answerSelected function and isCorrect function.*/
+The forEach loop creates a button variable- which will be used to create a button element for each answer in array.answers.
+It targets the text of each button with answer.option, populating each button element with each avaliable option property,
+and appends the button variable onto the answerButtons variable, creating a button for each of the given answer.option values.
+A class of 'btn' and 'disableBtn' is added to each button variable appended. Two event listeners are attached to the button
+variable, activating on a click and calling the answerSelected function and isCorrect function.*/
 function generateQuestion(array) {
   questionEl.innerText = array.question;
   shuffle(array.answers).forEach((answer) => {
@@ -142,9 +140,9 @@ user from clicking button elements after they've already selected one). Entering
 the nextQuestion array(which is 5) IS GREATER THAN the number which currentQuestion evaluates to + 1(nextQuestion is an array,
 arrays are 0 indexed). If nextQuestion.length is greater, then it will remove the class of 'hide' from the nextButton element,
 making it visible. If nextQuestion.length is NOT GREATER than currentQuestion + 1(which will happen once the user has reached
-the end of our array of questions), it will instead remove the class of 'hide' from the scoreButton variable and determine its
-text, making the Highscore button visible. It will also add the class of 'hide' to an element with an Id of 'time-readout'
-which makes the timer not visible.*/
+the end of our array of questions), it will instead remove the class of 'hide' from the scoreButton variable, making the
+Highscore button visible. It will also add the class of 'hide' to an element with an Id of 'time-readout' which makes the
+timer not visible.*/
 function answerSelected() {
   let disableBtn = document.getElementsByClassName('disableBtn');
 
@@ -195,11 +193,14 @@ setInterval. The first argument of setInterval is a nameless function; this func
 'time-readout' and gives it the text of 'Time left:' with a template literal of ${sec}, which allows the countdown to
 dynamically update as time passes. We then enter an if statement that checks if sec IS GREATER THAN 0(checking if we've
 ran out of time) and decrements sec if it is greater than zero. If sec is NOT GREATER than 0, we call clearInterval with an
-argument of timeCount- clearInterval being a built-in tool of setInterval which will interrupt its typical process(in this
-case, decrementing sec). We also have a secondary if statement that checks if currentQuestion evaluates to the same number
-as questions.length - 1(which would mean the user has reached the end of our quiz), and if so also calls clearInterval with
-an argument of timeCount. Finally, we have setIntervals second argument- after the curly brace with a comma- 1000, which is
-a measurment of milliseconds we'd like the setInterval function to delay itself by(evaluating to a 1 second passage of time).*/
+argument of timeCount- clearInterval being a built-in tool of setInterval which will interrupt its typical process, add the
+class of 'hide' to the questionContainerEl making it not visible, remove the class of 'hide' from the scoreButton variable
+making it visible, select an element with an Id of 'time-readout' and add the class of hide to it making the timer not visible,
+and decrement the userScore variable by 10(because the user will have ran out of time). We also have a secondary if statement
+that checks if currentQuestion evaluates to the same number as questions.length - 1(which would mean the user has reached the
+end of our quiz), and if so also calls clearInterval with an argument of timeCount. Finally, we have setIntervals second
+argument- after the curly brace with a comma- 1000, which is a measurment of milliseconds we'd like the setInterval function
+to delay itself by(evaluating to a 1 second passage of time).*/
 function timer() {
 
   const timeCount = setInterval(function () {
@@ -210,7 +211,6 @@ function timer() {
     }else{
       clearInterval(timeCount);
       questionContainerEl.classList.add("hide");
-      controls.classList.add("hide");
       scoreButton.classList.remove("hide");
       document.getElementById(`time-readout`).classList.add(`hide`);
       userScore -= 10;
@@ -221,21 +221,46 @@ function timer() {
     };
   }, 1000);
 };
+ /*saveScore and loadSavedScores don't actually work as intended currently; saving the user's score between sessions/reloads,
+ but it also isn't breaking the app. It's very likely that it's close to correct implimentation and only needs some tweaking
+ to work as I wanted it to. Google searching: how to save multiple user scores to a scoreboard javascript - seemed like it may
+ be helpful*/
+function saveScore(){
+  let totalScore = userScore + sec;
+
+  if(totalScore > 0){
+    localStorage.setItem('score', totalScore);
+  };
+  loadSavedScores();
+};
+
+function loadSavedScores(){
+  let savedScore = localStorage.getItem("score");
+
+  if(!savedScore){
+    return false;
+  };
+
+  console.log(savedScore, savedScore.length);
+};
 
 /*will need to create a container for saving previous scores, so as to load them upon displaying scoreboard. Function isnt
 complete, will write-up once we can save userScore in some way which allows it to be displayed*/
 function scorePage(){
-    questionContainerEl.classList.add("hide");
-    scoreBoard.classList.remove("hide");
+  let totalScore = userScore + sec;
+
+  questionContainerEl.classList.add("hide");
+  scoreBoard.classList.remove("hide");
     // localStorage.setItem("score", JSON.stringify(sec)); didn't work, but was supposed to save score 
-    scoreBoard.innerText = `Your score: ${userScore}`;
+  scoreBoard.innerText = `Your score: ${totalScore}`;
 };
 
 /*Below we have three event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
 function. Second, the event listener on our nextButton variable calls an anonymous function which iterates our currentQuestion
 variable, and calls the setupNextQuestion function. Third, the event listener on our startButton variable allows us to call
 the startGame function.*/
-scoreButton.addEventListener("click", scorePage);
+scoreButton.addEventListener("click", saveScore);
+scoreButton.addEventListener("click", scorePage); /*Still calls scorePage just fine, will leave for now.*/
 
 nextButton.addEventListener("click", () => {
   currentQuestion++;
@@ -246,10 +271,10 @@ startButton.addEventListener("click", startGame);
 
 
 //below is a possible quick-ref on how to impliment score-saving via methods on a different repo
-// let saveTasks = function() {
+/// let saveTasks = function() {
 //   localStorage.setItem("tasks", JSON.stringify(tasks));
-// }
-// let loadTasks = function() {
+/// }
+/// let loadTasks = function() {
 //   let savedTasks = localStorage.getItem("tasks"); //this variable here allows us to save added tasks between sessions
 //   // if there are no tasks, set tasks to an empty array and return out of the function
 //   if (!savedTasks) {
@@ -267,9 +292,10 @@ startButton.addEventListener("click", startGame);
 //     createTaskEl(savedTasks[i]);
 //     console.log(tasks[i]);
 //   }
-// };
+/// };
 
 /*Still TODO:
 highscores do not save between sessions, previous repo's code could have something that helps
 would be nice if users could save their highscore with a name of their choice
+correct/incorrect indicators to the user upon selecting an answer button
 */

@@ -10,26 +10,27 @@
 </head>
 <body>
     <header>
-        <!--score and time shouldnt be in the header-->
-        <button id="score-btn" class="score-btn btn hide">Highscores</button>
-        <p id="time-readout">Time left:</p>
+        <!--<p>
+            This is a time sensitive quiz. You'll be answering a handful of coding related questions.
+            Each correct answer will add 10 to your score, each incorrect answer will subtract 10 from your score,
+            running out of time will subtract 10 from your score, and completing the quiz with time left will add the
+            remaining time to your score. When you're ready, press start and the timer will begin, good luck!
+        </p>-->
     </header>
-    <div class="container">
+    <section class="container">
+        
+        <p id="time-readout">Time left:</p>
         <div id="question-container" class="hide">
             <div id="question">Question</div>
-            <div id="answer-buttons" class="btn-grid">
-                
-            </div>
+            <div id="answer-buttons" class="btn-grid"></div>
         </div>
         <div id="controls">
             <button id="start-btn" class="start-btn btn">Start Test</button>
             <button id="next-btn" class="next-btn btn hide">Next</button> 
+            <button id="score-btn" class="score-btn btn hide">Highscores</button>
         </div>
-        <div>
-            <p id="score-board" class="hide"></p>
-        </div>
-    </div>
-    <!--We could change some of these divs to more meaningful
-    section or other elements-->
+        <div id="score-board" class="hide"></div> <!--Probably will want to target this with either a for loop or a forEach,
+        similarily to how we generate our questions and answer buttons. Basically generate a <p> for each saved score there is-->
+    </section>
 </body>
 </html>
