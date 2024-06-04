@@ -16,6 +16,7 @@ if the user runs out of time, and have any remaining time added to the users sco
 let sec = 8;
 let nextQuestion, currentQuestion;
 let userScore = 0;
+let allScores = [];
 
 /*this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was
 taken from: https://bost.ocks.org/mike/shuffle/
@@ -229,19 +230,22 @@ function saveScore(){
   let totalScore = userScore + sec;
 
   if(totalScore > 0){
-    localStorage.setItem('score', totalScore);
+    allScores.push(totalScore); //localStorage.setItem('score', totalScore));
+    localStorage.setItem('score', JSON.stringify(totalScore));
   };
+  console.log(allScores); //here totalScore has been pushed into allScores
   loadSavedScores();
 };
 
 function loadSavedScores(){
   let savedScore = localStorage.getItem("score");
-
+  console.log(savedScore) //here we can console.log the score from out savedScore variable
   if(!savedScore){
     return false;
   };
 
-  console.log(savedScore, savedScore.length);
+  savedScore = JSON.parse(savedScore);
+  console.log(typeof savedScore);
 };
 
 /*will need to create a container for saving previous scores, so as to load them upon displaying scoreboard. Function isnt
@@ -295,7 +299,16 @@ startButton.addEventListener("click", startGame);
 /// };
 
 /*Still TODO:
-highscores do not save between sessions, previous repo's code could have something that helps
-would be nice if users could save their highscore with a name of their choice
+highscores do not save between sessions, previous repo's code could have something that helps-
+  -We need to store the value of our highscore data in an array, to make sure we can save several at a time
+  -hopefully will be as easy as using .push or some other array method to save highscore data
+  -currently still unable to figure out how to save entries to localStorage without overriding previous entries to localStorage
+
+would be nice if users could save their highscore with a name of their choice-
+  -We'll have to associate a form html element with the data we want a name assigned to
+  -will probaly be packaged in some sort of object (ex. let objWithData = {name: name, score: score})
+
 correct/incorrect indicators to the user upon selecting an answer button
+  -should be fairly simple, will likely be implimented via the same add/remove class 'hide' thats utilized throughout rest of app
+  -will be more realized once we have basic CSS with correct/incorrect values (ex. gren-colored correct response and red-colored incorrect response)
 */
