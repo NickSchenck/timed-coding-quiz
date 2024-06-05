@@ -12,11 +12,14 @@ let scoreBoard = document.getElementById("score-board");
 /*sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
 generic containers that will be assigned value as the app progresses. userScore is a variable initialized to 0,
 which will be iterated or decremented upon if the user answers each question correctly or incorrectly, decremented
-if the user runs out of time, and have any remaining time added to the users score if they finish the quiz early.*/
-let sec = 8;
+if the user runs out of time, and have any remaining time added to the users score if they finish the quiz early.
+allScores is a variable initialized as an array, which will store our totalScore and other properties. userDataObj is
+a variable initialized as an empty object, and is the container which is being stored in allScores*/
+let sec = 15;
 let nextQuestion, currentQuestion;
 let userScore = 0;
 let allScores = [];
+let userDataObj = {};
 
 /*this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was
 taken from: https://bost.ocks.org/mike/shuffle/
@@ -226,27 +229,33 @@ function timer() {
  but it also isn't breaking the app. It's very likely that it's close to correct implimentation and only needs some tweaking
  to work as I wanted it to. Google searching: how to save multiple user scores to a scoreboard javascript - seemed like it may
  be helpful*/
+ /* var dropd = document.getElementById("savedrop").value;
+    var drophistory = JSON.parse(localStorage.getItem("reason")) || [];
+    drophistory.push(dropd);
+    localStorage.setItem("reason", JSON.stringify(drophistory)); */
+    /*This function is FINALLY saving multiple values regarding the user's score, in localStorage. To follow-up on this:
+      -We FIRST need to limit the amount of allowed saves to localStorage, here's a link to help: https://stackoverflow.com/questions/67697409/how-to-set-an-item-limit-on-localstorage-items-javascript-html5
+      We will *hopefully* be able to use .pop(), rather than .shift(), as is suggested in that link, however to do that...
+      -We need to sort the entries in allScores, preferably by their allScore[i].score value, which this link should help with: https://stackoverflow.com/questions/1063007/how-to-sort-an-array-of-integers-correctly*/
 function saveScore(){
-  let totalScore = userScore + sec;
-
-  if(totalScore > 0){
-    allScores.push(totalScore); //localStorage.setItem('score', totalScore));
-    localStorage.setItem('score', JSON.stringify(totalScore));
+  let totalScore = userScore + sec; //This combination of increment/decrement of score from correct/incorrect answers + time left over DOES WORK
+  userDataObj = {
+    score: totalScore
   };
-  console.log(allScores); //here totalScore has been pushed into allScores
-  loadSavedScores();
+  let allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
+  // savedScore = JSON.parse(savedScore);
+  allScores.push(userDataObj);
+    localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+     //localStorage.setItem('score', totalScore));
+    
+  
+  console.log(allScores);
+  // loadSavedScores();
 };
 
-function loadSavedScores(){
-  let savedScore = localStorage.getItem("score");
-  console.log(savedScore) //here we can console.log the score from out savedScore variable
-  if(!savedScore){
-    return false;
-  };
+// function loadSavedScores(){
 
-  savedScore = JSON.parse(savedScore);
-  console.log(typeof savedScore);
-};
+// };
 
 /*will need to create a container for saving previous scores, so as to load them upon displaying scoreboard. Function isnt
 complete, will write-up once we can save userScore in some way which allows it to be displayed*/
@@ -299,11 +308,6 @@ startButton.addEventListener("click", startGame);
 /// };
 
 /*Still TODO:
-highscores do not save between sessions, previous repo's code could have something that helps-
-  -We need to store the value of our highscore data in an array, to make sure we can save several at a time
-  -hopefully will be as easy as using .push or some other array method to save highscore data
-  -currently still unable to figure out how to save entries to localStorage without overriding previous entries to localStorage
-
 would be nice if users could save their highscore with a name of their choice-
   -We'll have to associate a form html element with the data we want a name assigned to
   -will probaly be packaged in some sort of object (ex. let objWithData = {name: name, score: score})
