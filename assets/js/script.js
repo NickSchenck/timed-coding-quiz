@@ -18,6 +18,7 @@ a variable initialized as an empty object, and is the container which is being s
 let sec = 15;
 let nextQuestion, currentQuestion;
 let userScore = 0;
+let userScoreId = 0;
 let allScores = [];
 let userDataObj = {};
 
@@ -38,6 +39,41 @@ function shuffle(array) {
   };
   return array;
 };
+
+function exceedsLimit(prop) {
+  let limitLength = 5;
+  let exceedsLimit = false;
+
+  if(prop.length === limitLength) {
+      exceedsLimit = true;
+  };
+  return exceedsLimit;
+};
+
+//doesn't work currently, should be sorting our allScores object array when calling it
+// function compare(allScores){
+//   for(let i = 0; i < allScores.length; i++){
+//     for(let j = 0; j < allScores.length; j++){
+//       allScores.sort(function(){
+//          return allScores[i].score - allScores[j].score;
+//       });
+//     };
+//   };
+// };
+// function compare(array){
+//   array.sort(function(a, b){
+//     return a - b;
+//   })
+// }
+
+// function compare(array){
+//   for(let i = 0; i < array.length; i++){
+//     for(let j = 0; j < array.length; j++){
+//       array.sort(array[i].score, array[j.score]);
+//     };
+//   };
+//   return array;
+// };
 
 /*questions is an array containing several objects formatted as questions. Each object is
 denoted by the curly-brace containing the individual question to the curly-brace just under
@@ -234,18 +270,42 @@ function timer() {
     drophistory.push(dropd);
     localStorage.setItem("reason", JSON.stringify(drophistory)); */
     /*This function is FINALLY saving multiple values regarding the user's score, in localStorage. To follow-up on this:
-      -We FIRST need to limit the amount of allowed saves to localStorage, here's a link to help: https://stackoverflow.com/questions/67697409/how-to-set-an-item-limit-on-localstorage-items-javascript-html5
-      We will *hopefully* be able to use .pop(), rather than .shift(), as is suggested in that link, however to do that...
+      -items being saved are being limited properly, saving link for now: https://stackoverflow.com/questions/67697409/how-to-set-an-item-limit-on-localstorage-items-javascript-html5
+      -We will *hopefully* be able to use .pop(), rather than .shift(), as is suggested in that link, however to do that...
       -We need to sort the entries in allScores, preferably by their allScore[i].score value, which this link should help with: https://stackoverflow.com/questions/1063007/how-to-sort-an-array-of-integers-correctly*/
 function saveScore(){
   let totalScore = userScore + sec; //This combination of increment/decrement of score from correct/incorrect answers + time left over DOES WORK
   userDataObj = {
+    id: userScoreId,
     score: totalScore
   };
   let allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
-  // savedScore = JSON.parse(savedScore);
+  if(exceedsLimit(allScores)) {
+    allScores.shift();
+  };
+  //this seemed near-to being able to add an iterated id
+  for(let i = 0; i < allScores.length; i++){
+    for(let j = 0; j < allScores.length; j++){
+      if(!allScores[i].id){
+        allScores[i].id = 0
+      }else if(allScores[i].id === allScores[j].id){
+        allScores[i].id++
+      }
+    }
+    
+  }
   allScores.push(userDataObj);
-    localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+  // if(userDataObj.id){
+  //   userDataObj.id++
+  // }
+  
+  // compare(allScores);
+  
+  localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+  // localStorage.clear(allScores); //This will clear localStorage, if too full. seems to need to be ran twice
+  
+
+    
      //localStorage.setItem('score', totalScore));
     
   
@@ -311,6 +371,8 @@ startButton.addEventListener("click", startGame);
 would be nice if users could save their highscore with a name of their choice-
   -We'll have to associate a form html element with the data we want a name assigned to
   -will probaly be packaged in some sort of object (ex. let objWithData = {name: name, score: score})
+
+score might be being decremented greater than we want for an incorrect answer, needs more testing
 
 correct/incorrect indicators to the user upon selecting an answer button
   -should be fairly simple, will likely be implimented via the same add/remove class 'hide' thats utilized throughout rest of app
