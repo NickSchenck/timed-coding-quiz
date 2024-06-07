@@ -1,5 +1,5 @@
 /*variables for targeting specific elements within the DOM. In order startButton, scoreButton, nextButton,
-questionContainerEl, questionEl, answerButtons, and scoreBoard all select elements with varrying Ids
+questionContainerEl, questionEl, answerButtons, scoreBoard, and scoreReadout all select elements with varrying Ids
 that roughly equate to the name/functionality of their variable counterpart.*/
 let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
@@ -8,17 +8,17 @@ let questionContainerEl = document.getElementById("question-container");
 let questionEl = document.getElementById("question");
 let answerButtons = document.getElementById("answer-buttons");
 let scoreBoard = document.getElementById("score-board");
+let scoreReadout = document.getElementById("user-score")
 
 /*sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
 generic containers that will be assigned value as the app progresses. userScore is a variable initialized to 0,
 which will be iterated or decremented upon if the user answers each question correctly or incorrectly, decremented
 if the user runs out of time, and have any remaining time added to the users score if they finish the quiz early.
-allScores is a variable initialized as an array, which will store our totalScore and other properties. userDataObj is
-a variable initialized as an empty object, and is the container which is being stored in allScores*/
+allScores is a variable initialized as an array, which will store objects which evaluate to individual user tests. userDataObj is
+a variable initialized as an empty object, is the container which is being stored in allScores, and is what will contain user data upon test completion*/
 let sec = 15;
 let nextQuestion, currentQuestion;
 let userScore = 0;
-let userScoreId = 0;
 let allScores = [];
 let userDataObj = {};
 
@@ -40,6 +40,9 @@ function shuffle(array) {
   return array;
 };
 
+/*exceedsLimit tests a prop passed to the function, in this case the allScores array. It first initializes two variables; limitLength with a value of 5, and exceedsLimit
+with a value of false. We enter an if statement that checks if the prop length is equivalent to the limitLength variable, and if it is we set exceedsLimit value to true.
+After this check, we return the exceedsLimit variable.*/
 function exceedsLimit(prop) {
   let limitLength = 5;
   let exceedsLimit = false;
@@ -49,31 +52,6 @@ function exceedsLimit(prop) {
   };
   return exceedsLimit;
 };
-
-//doesn't work currently, should be sorting our allScores object array when calling it
-// function compare(allScores){
-//   for(let i = 0; i < allScores.length; i++){
-//     for(let j = 0; j < allScores.length; j++){
-//       allScores.sort(function(){
-//          return allScores[i].score - allScores[j].score;
-//       });
-//     };
-//   };
-// };
-// function compare(array){
-//   array.sort(function(a, b){
-//     return a - b;
-//   })
-// }
-
-// function compare(array){
-//   for(let i = 0; i < array.length; i++){
-//     for(let j = 0; j < array.length; j++){
-//       array.sort(array[i].score, array[j.score]);
-//     };
-//   };
-//   return array;
-// };
 
 /*questions is an array containing several objects formatted as questions. Each object is
 denoted by the curly-brace containing the individual question to the curly-brace just under
@@ -153,6 +131,7 @@ function setupNextQuestion() {
   generateQuestion(nextQuestion[currentQuestion]);
 };
 
+//////////////Left off reviewing our notes here
 /*generateQuestion first manipulates the text of questionEl variable by targeting the array parameter passed to the function
 and appending the property of question onto it from the object array. We then call our shuffle function on(randomizing the
 order which answers are rendered), and target the answers property of the object array, putting it through a forEach loop.
@@ -261,54 +240,23 @@ function timer() {
     };
   }, 1000);
 };
- /*saveScore and loadSavedScores don't actually work as intended currently; saving the user's score between sessions/reloads,
- but it also isn't breaking the app. It's very likely that it's close to correct implimentation and only needs some tweaking
- to work as I wanted it to. Google searching: how to save multiple user scores to a scoreboard javascript - seemed like it may
- be helpful*/
- /* var dropd = document.getElementById("savedrop").value;
-    var drophistory = JSON.parse(localStorage.getItem("reason")) || [];
-    drophistory.push(dropd);
-    localStorage.setItem("reason", JSON.stringify(drophistory)); */
-    /*This function is FINALLY saving multiple values regarding the user's score, in localStorage. To follow-up on this:
-      -items being saved are being limited properly, saving link for now: https://stackoverflow.com/questions/67697409/how-to-set-an-item-limit-on-localstorage-items-javascript-html5
-      -We will *hopefully* be able to use .pop(), rather than .shift(), as is suggested in that link, however to do that...
-      -We need to sort the entries in allScores, preferably by their allScore[i].score value, which this link should help with: https://stackoverflow.com/questions/1063007/how-to-sort-an-array-of-integers-correctly*/
+
+/*Is now working, will write-up soon */
 function saveScore(){
-  let totalScore = userScore + sec; //This combination of increment/decrement of score from correct/incorrect answers + time left over DOES WORK
+  let totalScore = userScore + sec;
   userDataObj = {
-    id: userScoreId,
+    id: 0,
     score: totalScore
   };
   let allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
-  if(exceedsLimit(allScores)) {
-    allScores.shift();
-  };
-  //this seemed near-to being able to add an iterated id
-  for(let i = 0; i < allScores.length; i++){
-    for(let j = 0; j < allScores.length; j++){
-      if(!allScores[i].id){
-        allScores[i].id = 0
-      }else if(allScores[i].id === allScores[j].id){
-        allScores[i].id++
-      }
-    }
-    
-  }
-  allScores.push(userDataObj);
-  // if(userDataObj.id){
-  //   userDataObj.id++
-  // }
-  
-  // compare(allScores);
-  
-  localStorage.setItem('scoreEntry', JSON.stringify(allScores));
-  // localStorage.clear(allScores); //This will clear localStorage, if too full. seems to need to be ran twice
-  
 
-    
-     //localStorage.setItem('score', totalScore));
-    
-  
+  if(exceedsLimit(allScores)) {
+    allScores.pop();
+  };
+  allScores.push(userDataObj);
+  allScores.sort((a, b) => b.score - a.score);
+  localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+  // localStorage.clear(allScores); //This will clear localStorage, if needing to be done manually. Doubt it will be needed at this point, but still need to add name prop
   console.log(allScores);
   // loadSavedScores();
 };
@@ -317,15 +265,14 @@ function saveScore(){
 
 // };
 
-/*will need to create a container for saving previous scores, so as to load them upon displaying scoreboard. Function isnt
-complete, will write-up once we can save userScore in some way which allows it to be displayed*/
 function scorePage(){
   let totalScore = userScore + sec;
 
+  scoreButton.classList.add("hide");
   questionContainerEl.classList.add("hide");
   scoreBoard.classList.remove("hide");
-    // localStorage.setItem("score", JSON.stringify(sec)); didn't work, but was supposed to save score 
-  scoreBoard.innerText = `Your score: ${totalScore}`;
+  scoreReadout.classList.remove('hide');
+  scoreReadout.innerText = `You scored ${totalScore} points!`;
 };
 
 /*Below we have three event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
@@ -333,7 +280,7 @@ function. Second, the event listener on our nextButton variable calls an anonymo
 variable, and calls the setupNextQuestion function. Third, the event listener on our startButton variable allows us to call
 the startGame function.*/
 scoreButton.addEventListener("click", saveScore);
-scoreButton.addEventListener("click", scorePage); /*Still calls scorePage just fine, will leave for now.*/
+scoreButton.addEventListener("click", scorePage);
 
 nextButton.addEventListener("click", () => {
   currentQuestion++;
@@ -342,37 +289,12 @@ nextButton.addEventListener("click", () => {
 
 startButton.addEventListener("click", startGame);
 
-
-//below is a possible quick-ref on how to impliment score-saving via methods on a different repo
-/// let saveTasks = function() {
-//   localStorage.setItem("tasks", JSON.stringify(tasks));
-/// }
-/// let loadTasks = function() {
-//   let savedTasks = localStorage.getItem("tasks"); //this variable here allows us to save added tasks between sessions
-//   // if there are no tasks, set tasks to an empty array and return out of the function
-//   if (!savedTasks) {
-//     return false;
-//   }
-//   console.log("Saved tasks found!");
-//   // else, load up saved tasks
-
-//   // parse into array of objects
-//   savedTasks = JSON.parse(savedTasks);//parse converts a number back into an array
-
-//   // loop through savedTasks array
-//   for (let i = 0; i < savedTasks.length; i++) {
-//     // pass each task object into the `createTaskEl()` function
-//     createTaskEl(savedTasks[i]);
-//     console.log(tasks[i]);
-//   }
-/// };
-
 /*Still TODO:
+will need to impliment some if/else logic of replacing score-entries, where existing scores should NOT be replaced if the user did not exceed lowest saved score
+
 would be nice if users could save their highscore with a name of their choice-
   -We'll have to associate a form html element with the data we want a name assigned to
   -will probaly be packaged in some sort of object (ex. let objWithData = {name: name, score: score})
-
-score might be being decremented greater than we want for an incorrect answer, needs more testing
 
 correct/incorrect indicators to the user upon selecting an answer button
   -should be fairly simple, will likely be implimented via the same add/remove class 'hide' thats utilized throughout rest of app

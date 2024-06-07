@@ -10,15 +10,17 @@
 </head>
 <body>
     <header>
-        <!--<p>
-            This is a time sensitive quiz. You'll be answering a handful of coding related questions.
-            Each correct answer will add 10 to your score, each incorrect answer will subtract 10 from your score,
-            running out of time will subtract 10 from your score, and completing the quiz with time left will add the
-            remaining time to your score. When you're ready, press start and the timer will begin, good luck!
-        </p>-->
+
     </header>
-    <section class="container">
-        
+    <!--<section class="prompts">
+
+    </section>  Going to have to do some html work very soon here. I think it'd work well to restructure the quiz into two parts, denoted by the two section elements.
+My idea is the first part of the app will ask the user if they'd like to save a name with the score they'll recieve for doing the quiz, which will be a yes/no button prompt.
+If the user selects yes, it'll show them a input field for typing and sumbitting their name, and if the user selects no, the function associated will instead return false,
+which will denote a value-assignment to the name property like 'Unknown' or 'Anon'. After we've captured these responses, we'll take the user to the main page where they'll
+be primed for the quiz, and presented the start button that's currently immediatly presented to them. From this point the quiz will progress as it mostly has been, barring
+future changes(ex. correct/incorrect feedback on clicking answer buttons, displaying all the saved data we have for users scores)-->
+    <section class="quiz">
         <p id="time-readout">Time left:</p>
         <div id="question-container" class="hide">
             <div id="question">Question</div>
@@ -29,7 +31,9 @@
             <button id="next-btn" class="next-btn btn hide">Next</button> 
             <button id="score-btn" class="score-btn btn hide">Highscores</button>
         </div>
-        <ol id="score-board" class="hide"></ol> <!--Probably will want to target this with either a for loop or a forEach,
+        <div id="score-board" class="hide">
+            <p id="user-score" class="hide"></p>
+        </div> <!--Probably will want to target this with either a for loop or a forEach,
         similarily to how we generate our questions and answer buttons. Basically generate a <p> for each saved score there is-->
     </section>
 </body>
