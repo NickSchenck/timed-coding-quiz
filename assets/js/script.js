@@ -7,6 +7,7 @@ let nextButton = document.getElementById("next-btn");
 let questionContainerEl = document.getElementById("question-container");
 let questionEl = document.getElementById("question");
 let answerButtons = document.getElementById("answer-buttons");
+let scoreSection = document.getElementById('score-section')
 let scoreBoard = document.getElementById("score-board");
 let scoreReadout = document.getElementById("user-score")
 
@@ -245,10 +246,9 @@ function timer() {
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
-    id: 0,
     score: totalScore
   };
-  let allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
+  allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
 
   if(exceedsLimit(allScores)) {
     allScores.pop();
@@ -258,21 +258,22 @@ function saveScore(){
   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
   // localStorage.clear(allScores); //This will clear localStorage, if needing to be done manually. Doubt it will be needed at this point, but still need to add name prop
   console.log(allScores);
-  // loadSavedScores();
+  scorePage();
 };
-
-// function loadSavedScores(){
-
-// };
 
 function scorePage(){
   let totalScore = userScore + sec;
 
   scoreButton.classList.add("hide");
   questionContainerEl.classList.add("hide");
-  scoreBoard.classList.remove("hide");
-  scoreReadout.classList.remove('hide');
+  scoreSection.classList.remove("hide");
   scoreReadout.innerText = `You scored ${totalScore} points!`;
+
+  allScores.forEach((score) =>{
+    let li = document.createElement("li");
+    li.innerText = score.score;
+    scoreBoard.appendChild(li);
+  });
 };
 
 /*Below we have three event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
@@ -280,7 +281,6 @@ function. Second, the event listener on our nextButton variable calls an anonymo
 variable, and calls the setupNextQuestion function. Third, the event listener on our startButton variable allows us to call
 the startGame function.*/
 scoreButton.addEventListener("click", saveScore);
-scoreButton.addEventListener("click", scorePage);
 
 nextButton.addEventListener("click", () => {
   currentQuestion++;
