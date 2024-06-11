@@ -1,25 +1,46 @@
-/*variables for targeting specific elements within the DOM. In order startButton, scoreButton, nextButton,
-questionContainerEl, questionEl, answerButtons, scoreBoard, and scoreReadout all select elements with varrying Ids
-that roughly equate to the name/functionality of their variable counterpart.*/
+/*variables for targeting specific elements within the DOM. They're roughly grouped into semi-related chunks. In order primerText,
+startButton, scoreButton, questionContainerEl, questionEl, answerButtons, nextButton, quizSection, scoreSection, scoreBoard,
+scoreReadout, usernameSection, usernameInput, submitName, and skipName all select elements with varrying Ids that roughly equate
+to the name/functionality of their variable counterpart.*/
+/*Primer text that indicates what our user is instructed/greeted with*/
+let primerText = document.getElementById("primer-text");
+
+/*Buttons for controlling the start and end of our quiz*/
 let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
-let nextButton = document.getElementById("next-btn");
+
+/*Containers for displaying our quiz questions and answers, and buttons for controlling the answering of questions and generation of
+subsequent questions*/
 let questionContainerEl = document.getElementById("question-container");
 let questionEl = document.getElementById("question");
 let answerButtons = document.getElementById("answer-buttons");
-let scoreSection = document.getElementById('score-section')
+let nextButton = document.getElementById("next-btn");
+
+/*Containers which allow us to control how/when various sections of our app are visible, and when the user can display them*/
+let quizSection = document.getElementById("quiz");
+let scoreSection = document.getElementById('score-section');
 let scoreBoard = document.getElementById("score-board");
-let scoreReadout = document.getElementById("user-score")
+let scoreReadout = document.getElementById("user-score");
+
+/*Containers for handling username submission/assignment, and when they are visible to the user*/
+let usernameSection = document.getElementById("prompt");
+let usernameInput = document.getElementById("user-name");
+let submitName = document.getElementById("submit-name");
+let skipName = document.getElementById("skip-name");
+
 
 /*sec is a variable for storing time. nextQuestion and currentQuestion are two initialized variables to act as
 generic containers that will be assigned value as the app progresses. userScore is a variable initialized to 0,
 which will be iterated or decremented upon if the user answers each question correctly or incorrectly, decremented
 if the user runs out of time, and have any remaining time added to the users score if they finish the quiz early.
-allScores is a variable initialized as an array, which will store objects which evaluate to individual user tests. userDataObj is
-a variable initialized as an empty object, is the container which is being stored in allScores, and is what will contain user data upon test completion*/
+userName is a variable initialized to an empty string, which will be assigned value based on what username the user
+has entered, or if they've decided to skip username entry. allScores is a variable initialized as an array, which will
+store objects which evaluate to individual user tests. userDataObj is a variable initialized as an empty object, is the
+container which is being stored in allScores, and is what will contain user data upon test completion*/
 let sec = 15;
 let nextQuestion, currentQuestion;
 let userScore = 0;
+let userName = '';
 let allScores = [];
 let userDataObj = {};
 
@@ -105,13 +126,34 @@ let questions = [
   }
 ];
 
-/*app is started through a click event listener which calls this function. startGame first calls the timer function,
-uses the startButton variable to add a class of 'hide' to its element, and removes the 'hide' class from
-questionContainerEl which makes its element visible. The container variable nextQuestion is initialized with a value
-that calls our shuffle function on the array of questions, and currentQuestion is given a value of 0, which ensures
-we will start at the beginning of our now randomized nextQuestion array, once the function setupNextQuestion is called.*/
+/*setUsername is called through one of two event listeners, which determine what value will be assigned to the userName variable.
+We first take in a parameter of e, which will target an event on the page(in this case a 'click'), then pass it into an if/else
+statement. Within the if/else, we check to see if the id property of the target effected by the event is equal to the string
+'submit-name'. If so, we assign the value property of the usernameInput variable to our userName variable, else we assign
+'Anonymous' as the string-value of our userName variable. After this, we add a class of 'hide' to our usernameSection and
+quizSection variables, making them no-longer visible, and change the innerText property of out primerText variable to the string;
+'When ready, click the 'Start' button below to begin the quiz, which will also start the timer. Good luck!'*/
+function setUsername(e){
+
+  if(e.target.id === 'submit-name'){
+    userName = usernameInput.value;
+  }else{
+    userName = 'Anonymous';
+  };
+  usernameSection.classList.add("hide");
+  quizSection.classList.remove("hide");
+  primerText.innerText = `When ready, click the 'Start' button below to begin the quiz, which will also start the timer. Good luck!`;
+};
+
+/*The quiz is started through a click event listener which calls this function. startGame first calls the timer function,
+uses the primerText variable to add a class of 'hide' to its element, uses the startButton variable to add a class of
+'hide' to its element, and removes the 'hide' class from questionContainerEl which makes its element visible. The container
+variable nextQuestion is initialized with a value that calls our shuffle function on the array of questions, and
+currentQuestion is given a value of 0, which ensures we will start at the beginning of our now randomized nextQuestion array,
+once the function setupNextQuestion is called.*/
 function startGame() {
   timer();
+  primerText.classList.add("hide");
   startButton.classList.add("hide");
   questionContainerEl.classList.remove("hide");
   nextQuestion = shuffle(questions);
@@ -132,7 +174,6 @@ function setupNextQuestion() {
   generateQuestion(nextQuestion[currentQuestion]);
 };
 
-//////////////Left off reviewing our notes here
 /*generateQuestion first manipulates the text of questionEl variable by targeting the array parameter passed to the function
 and appending the property of question onto it from the object array. We then call our shuffle function on(randomizing the
 order which answers are rendered), and target the answers property of the object array, putting it through a forEach loop.
@@ -158,7 +199,7 @@ for loop, where we initialize the variable i, check it against the length of the
 LESS THAN that check. Within the for loop, we set the disabled propery of disableBtn at an index to true(this prevents the
 user from clicking button elements after they've already selected one). Entering an if statement, we check if the length of
 the nextQuestion array(which is 5) IS GREATER THAN the number which currentQuestion evaluates to + 1(nextQuestion is an array,
-arrays are 0 indexed). If nextQuestion.length is greater, then it will remove the class of 'hide' from the nextButton element,
+arrays are 0 indexed). If nextQuestion.length IS GREATER, then it will remove the class of 'hide' from the nextButton element,
 making it visible. If nextQuestion.length is NOT GREATER than currentQuestion + 1(which will happen once the user has reached
 the end of our array of questions), it will instead remove the class of 'hide' from the scoreButton variable, making the
 Highscore button visible. It will also add the class of 'hide' to an element with an Id of 'time-readout' which makes the
@@ -246,6 +287,7 @@ function timer() {
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
+    name: userName,
     score: totalScore
   };
   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
@@ -271,15 +313,16 @@ function scorePage(){
 
   allScores.forEach((score) =>{
     let li = document.createElement("li");
-    li.innerText = score.score;
+    li.innerText = `${score.name}: ${score.score}`;
     scoreBoard.appendChild(li);
   });
 };
 
-/*Below we have three event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
+/*Below we have five event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
 function. Second, the event listener on our nextButton variable calls an anonymous function which iterates our currentQuestion
 variable, and calls the setupNextQuestion function. Third, the event listener on our startButton variable allows us to call
-the startGame function.*/
+the startGame function. Fourth and fifth are both for calling the setUsername function, depending on what name value the user
+would like associated with their score.*/
 scoreButton.addEventListener("click", saveScore);
 
 nextButton.addEventListener("click", () => {
@@ -289,14 +332,21 @@ nextButton.addEventListener("click", () => {
 
 startButton.addEventListener("click", startGame);
 
+submitName.addEventListener("click", setUsername);
+skipName.addEventListener("click", setUsername);
+
 /*Still TODO:
 will need to impliment some if/else logic of replacing score-entries, where existing scores should NOT be replaced if the user did not exceed lowest saved score
-
-would be nice if users could save their highscore with a name of their choice-
-  -We'll have to associate a form html element with the data we want a name assigned to
-  -will probaly be packaged in some sort of object (ex. let objWithData = {name: name, score: score})
+  -similarly, we need to have some if/else logic which will simply NOT push a given users score to the scoreboard at all, if it doesn't exceed a certain threshold
 
 correct/incorrect indicators to the user upon selecting an answer button
   -should be fairly simple, will likely be implimented via the same add/remove class 'hide' thats utilized throughout rest of app
   -will be more realized once we have basic CSS with correct/incorrect values (ex. gren-colored correct response and red-colored incorrect response)
+  -very likely want to target the isCorrect function to display these inicators, as we're already targeting logic there which affects variables depending on if
+  the selected answer is correct/incorrect
+
+Would be nice to have an array of question objects which is larger than the amount of questions we'll have the user answer, so that we can further randomize the
+test by applying the shuffle function to that array of question-objects and pushing the first five into an array which will display those questions.
+  -we'll probably want to get rid of the current randomizing of the order our questions are displayed, as this would ensure they'll always be randomized from a
+  larger selection of questions
 */

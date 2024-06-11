@@ -9,18 +9,21 @@
     <script defer src="./assets/js/script.js"></script>
 </head>
 <body>
-    <header>
-
+    <header id="primer-text">
+        Hello! This is a short, 5 question coding-quiz app.
     </header>
-    <!--<section class="prompts">
-
-    </section>  Going to have to do some html work very soon here. I think it'd work well to restructure the quiz into two parts, denoted by the two section elements.
+    <section class="prompt" id="prompt">
+        <p>First, please provide a name to save with your score</p>
+        <input type="text" name="user-name" id="user-name" placeholder="Your name here"/>
+        <button id="submit-name">Submit</button>
+        <button id="skip-name">Skip</button>
+    </section>  <!--Going to have to do some html work very soon here. I think it'd work well to restructure the quiz into two parts, denoted by the two section elements.
 My idea is the first part of the app will ask the user if they'd like to save a name with the score they'll recieve for doing the quiz, which will be a yes/no button prompt.
 If the user selects yes, it'll show them a input field for typing and sumbitting their name, and if the user selects no, the function associated will instead return false,
 which will denote a value-assignment to the name property like 'Unknown' or 'Anon'. After we've captured these responses, we'll take the user to the main page where they'll
 be primed for the quiz, and presented the start button that's currently immediatly presented to them. From this point the quiz will progress as it mostly has been, barring
 future changes(ex. correct/incorrect feedback on clicking answer buttons, displaying all the saved data we have for users scores)-->
-    <section class="quiz">
+    <section class="quiz hide" id="quiz">
         <p id="time-readout">Time left:</p>
         <div id="question-container" class="hide">
             <div id="question">Question</div>
