@@ -15,6 +15,8 @@ let questionContainerEl = document.getElementById("question-container");
 let questionEl = document.getElementById("question");
 let answerButtons = document.getElementById("answer-buttons");
 let nextButton = document.getElementById("next-btn");
+let answerCorrect = document.getElementById("answer-correct");
+let answerIncorrect = document.getElementById("answer-incorrect");
 
 /*Containers which allow us to control how/when various sections of our app are visible, and when the user can display them*/
 let quizSection = document.getElementById("quiz");
@@ -167,7 +169,8 @@ We then call the generateQuestion function with the argument of nextQuestion- ou
 of currentQuestion(initialized as 0 in the startGame function).*/
 function setupNextQuestion() {
   nextButton.classList.add("hide");
-
+  answerCorrect.classList.add("hide");
+  answerIncorrect.classList.add("hide");
   while (answerButtons.firstChild) {
     answerButtons.removeChild(answerButtons.firstChild);
   };
@@ -240,10 +243,12 @@ function isCorrect(event){
       &&
       nextQuestion[currentQuestion].answers[i].correct === true){
       userScore += 10;
+      answerCorrect.classList.remove("hide");
     }else if(answerText === nextQuestion[currentQuestion].answers[i].option
       &&
       nextQuestion[currentQuestion].answers[i].correct === false){
       userScore -= 10;
+      answerIncorrect.classList.remove("hide");
     };
   };
 };
@@ -283,7 +288,50 @@ function timer() {
   }, 1000);
 };
 
-/*Is now working, will write-up soon */
+/*The below attempts at getting the function to get rid of a score if the achieved users score exceeds it(while the limit of what's allowed to be saved is reached) AND
+appropriately push a score which is greater than 10 to an empty array(this would usually result in the same score being pushed multiple times) is worth keeping for ideas.
+Doesn't currently work, so will be leaving the previous version of the function implimented to be closer to a functional app. Might consider trying something like
+while(exceedsLimit(allScores) to target...something.*/
+// function saveScore(){
+//   let totalScore = userScore + sec;
+//   userDataObj = {
+//     name: userName,
+//     score: totalScore
+//   };
+//   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
+  
+//   if(exceedsLimit(allScores)){
+//     allScores.pop();
+//     if(allScores.length === 0){
+//       if(totalScore > 10){
+//         allScores.push(userDataObj);
+//       } //could add an else here that'd change and element so that the user is informed their score doesn't meet minimum value for being saved
+//     }else{
+//       for(let i = 0; i < allScores.length; i++){
+//         if(totalScore > 10){ //!exceedsLimit is causing the array to push the users score more than once
+//           allScores.push(userDataObj);
+//         }else if(totalScore > allScores[i].score){
+          
+//           allScores.push(userDataObj);
+//         }
+//       }
+//     }
+//   }
+  
+//   // if(allScores.length === 0 && totalScore > 10){
+//   //   allScores.push(userDataObj);
+//   // }else if(allScores.length > 0 && totalScore > 10){
+//   //   if(exceedsLimit(allScores)) {
+//   //     allScores.pop();
+//   //   };
+//   //   allScores.push(userDataObj);
+//   // };
+//   allScores.sort((a, b) => b.score - a.score);
+//   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+//   localStorage.clear(allScores); //This will clear localStorage, if needing to be done manually. Kept for now for testing purposes.
+//   console.log(allScores);
+//   scorePage();
+// };
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
@@ -311,11 +359,15 @@ function scorePage(){
   scoreSection.classList.remove("hide");
   scoreReadout.innerText = `You scored ${totalScore} points!`;
 
-  allScores.forEach((score) =>{
-    let li = document.createElement("li");
-    li.innerText = `${score.name}: ${score.score}`;
-    scoreBoard.appendChild(li);
-  });
+  if(allScores.length > 0){
+    allScores.forEach((score) =>{
+      let li = document.createElement("li");
+      li.innerText = `${score.name}: ${score.score}`;
+      scoreBoard.appendChild(li);
+    });
+  }else{
+    scoreBoard.innerHTML = `There are no highscores yet!`
+  };
 };
 
 /*Below we have five event listeners. First, the event listener on our scoreButton variable allows us to call the scorePage
@@ -338,15 +390,14 @@ skipName.addEventListener("click", setUsername);
 /*Still TODO:
 will need to impliment some if/else logic of replacing score-entries, where existing scores should NOT be replaced if the user did not exceed lowest saved score
   -similarly, we need to have some if/else logic which will simply NOT push a given users score to the scoreboard at all, if it doesn't exceed a certain threshold
-
-correct/incorrect indicators to the user upon selecting an answer button
-  -should be fairly simple, will likely be implimented via the same add/remove class 'hide' thats utilized throughout rest of app
-  -will be more realized once we have basic CSS with correct/incorrect values (ex. gren-colored correct response and red-colored incorrect response)
-  -very likely want to target the isCorrect function to display these inicators, as we're already targeting logic there which affects variables depending on if
-  the selected answer is correct/incorrect
+  -kind-of sorts itself already, where if we're filling-up the storage for allScores we will see the lowest score always be deleted, and the highscores sorted
+  highest-to-lowest; problem arrises when allScores is full, as the last score is deleted regardless of whether the userscore exceeds it or not.
 
 Would be nice to have an array of question objects which is larger than the amount of questions we'll have the user answer, so that we can further randomize the
 test by applying the shuffle function to that array of question-objects and pushing the first five into an array which will display those questions.
   -we'll probably want to get rid of the current randomizing of the order our questions are displayed, as this would ensure they'll always be randomized from a
   larger selection of questions
+
+There's a glitch, I believe with the last question specifically, where the timer stops and doesn't time the user out of the test. Will need further testing to
+understand the issue.
 */

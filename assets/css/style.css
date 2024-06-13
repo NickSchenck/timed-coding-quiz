@@ -47,6 +47,15 @@ body{
 .hide{
     display: none;
 }
+
+#answer-correct{
+    color: green;
+}
+
+#answer-incorrect{
+    color: red;
+}
+
 #score-board{
     font-size: xx-large;
     margin-left: 12px;
