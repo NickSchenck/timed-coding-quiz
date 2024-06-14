@@ -251,6 +251,7 @@ function isCorrect(event){
       answerIncorrect.classList.remove("hide");
     };
   };
+  console.log(event.target);
 };
 
 /*The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function,
@@ -282,56 +283,17 @@ function timer() {
       userScore -= 10;
     };
 
-    if(currentQuestion === questions.length - 1){
+    if(currentQuestion === questions.length - 1){ /*This is the cause of our timer stopping on the last question. Need to figure out how to stop the timer when the user
+    has completed the test, not allowing it to continue after the last question has been answered*/
       clearInterval(timeCount);
     };
   }, 1000);
 };
+// if(currentQuestion === questions.length - 1){ /*This is the cause of our timer stopping on the last question. Need to figure out how to stop the timer when the user
+//     has completed the test, not allowing it to continue after the last question has been answered*/
+//       clearInterval(timeCount);
+//     };
 
-/*The below attempts at getting the function to get rid of a score if the achieved users score exceeds it(while the limit of what's allowed to be saved is reached) AND
-appropriately push a score which is greater than 10 to an empty array(this would usually result in the same score being pushed multiple times) is worth keeping for ideas.
-Doesn't currently work, so will be leaving the previous version of the function implimented to be closer to a functional app. Might consider trying something like
-while(exceedsLimit(allScores) to target...something.*/
-// function saveScore(){
-//   let totalScore = userScore + sec;
-//   userDataObj = {
-//     name: userName,
-//     score: totalScore
-//   };
-//   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
-  
-//   if(exceedsLimit(allScores)){
-//     allScores.pop();
-//     if(allScores.length === 0){
-//       if(totalScore > 10){
-//         allScores.push(userDataObj);
-//       } //could add an else here that'd change and element so that the user is informed their score doesn't meet minimum value for being saved
-//     }else{
-//       for(let i = 0; i < allScores.length; i++){
-//         if(totalScore > 10){ //!exceedsLimit is causing the array to push the users score more than once
-//           allScores.push(userDataObj);
-//         }else if(totalScore > allScores[i].score){
-          
-//           allScores.push(userDataObj);
-//         }
-//       }
-//     }
-//   }
-  
-//   // if(allScores.length === 0 && totalScore > 10){
-//   //   allScores.push(userDataObj);
-//   // }else if(allScores.length > 0 && totalScore > 10){
-//   //   if(exceedsLimit(allScores)) {
-//   //     allScores.pop();
-//   //   };
-//   //   allScores.push(userDataObj);
-//   // };
-//   allScores.sort((a, b) => b.score - a.score);
-//   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
-//   localStorage.clear(allScores); //This will clear localStorage, if needing to be done manually. Kept for now for testing purposes.
-//   console.log(allScores);
-//   scorePage();
-// };
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
@@ -340,16 +302,36 @@ function saveScore(){
   };
   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
 
-  if(exceedsLimit(allScores)) {
+  if(allScores.length < 5){
+    allScores.push(userDataObj);
+  }else if(exceedsLimit(allScores) && totalScore > allScores[4].score){
     allScores.pop();
+    allScores.push(userDataObj);
   };
-  allScores.push(userDataObj);
   allScores.sort((a, b) => b.score - a.score);
   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
   // localStorage.clear(allScores); //This will clear localStorage, if needing to be done manually. Doubt it will be needed at this point, but still need to add name prop
   console.log(allScores);
   scorePage();
 };
+// function saveScore(){
+//   let totalScore = userScore + sec;
+//   userDataObj = {
+//     name: userName,
+//     score: totalScore
+//   };
+//   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
+
+//   if(exceedsLimit(allScores)) {
+//     allScores.pop();
+//   };
+//   allScores.push(userDataObj);
+//   allScores.sort((a, b) => b.score - a.score);
+//   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+//   // localStorage.clear(allScores); //This will clear localStorage, if needing to be done manually. Doubt it will be needed at this point, but still need to add name prop
+//   console.log(allScores);
+//   scorePage();
+// };
 
 function scorePage(){
   let totalScore = userScore + sec;
@@ -365,8 +347,6 @@ function scorePage(){
       li.innerText = `${score.name}: ${score.score}`;
       scoreBoard.appendChild(li);
     });
-  }else{
-    scoreBoard.innerHTML = `There are no highscores yet!`
   };
 };
 
@@ -388,11 +368,6 @@ submitName.addEventListener("click", setUsername);
 skipName.addEventListener("click", setUsername);
 
 /*Still TODO:
-will need to impliment some if/else logic of replacing score-entries, where existing scores should NOT be replaced if the user did not exceed lowest saved score
-  -similarly, we need to have some if/else logic which will simply NOT push a given users score to the scoreboard at all, if it doesn't exceed a certain threshold
-  -kind-of sorts itself already, where if we're filling-up the storage for allScores we will see the lowest score always be deleted, and the highscores sorted
-  highest-to-lowest; problem arrises when allScores is full, as the last score is deleted regardless of whether the userscore exceeds it or not.
-
 Would be nice to have an array of question objects which is larger than the amount of questions we'll have the user answer, so that we can further randomize the
 test by applying the shuffle function to that array of question-objects and pushing the first five into an array which will display those questions.
   -we'll probably want to get rid of the current randomizing of the order our questions are displayed, as this would ensure they'll always be randomized from a
@@ -400,4 +375,5 @@ test by applying the shuffle function to that array of question-objects and push
 
 There's a glitch, I believe with the last question specifically, where the timer stops and doesn't time the user out of the test. Will need further testing to
 understand the issue.
+  -sub-glitch of runnning out of time while the next button is visible allows the next button to remain visible
 */
