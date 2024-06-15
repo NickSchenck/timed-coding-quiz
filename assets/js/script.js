@@ -88,7 +88,8 @@ let questions = [
       { option: "A CSS declaration that hides the element.", correct: false },
       { option: "A financial class in society that isn't well defined.", correct: false },
       { option: "Uhhhh... a kinda germ??", correct: false }
-    ]
+    ],
+    isAnswered: false
   },
   {
     question: "What is the purpose of the alt attribute for images?",
@@ -97,7 +98,8 @@ let questions = [
       { option: "To give your image a grungy, punk-like filter.", correct: false },
       { option: "To provide context for the image.", correct: true },
       { option: "To alter the image with provided parameters.", correct: false }
-    ]
+    ],
+    isAnswered: false
   },
   {
     question: "What is the preferred way to include or link another file in programming?",
@@ -106,7 +108,8 @@ let questions = [
       { option: "Through the browser.", correct: false },
       { option: "Absolute pathing.", correct: false },
       { option: "Filing is for interns... get one of them to do it.", correct: false }
-    ]
+    ],
+    isAnswered: false
   },
   {
     question: "What is the command to push code to GitHub?",
@@ -115,7 +118,8 @@ let questions = [
       { option: "Push? Are you threatening me??", correct: false },
       { option: "git commit -m", correct: false },
       { option: "git push origin main", correct: true }
-    ]
+    ],
+    isAnswered: false
   },
   {
     question: "Which of the following is >NOT< a reason to validate a user's responses?",
@@ -124,7 +128,8 @@ let questions = [
       { option: "When they're rude and a jerk.", correct: true },
       { option: "Reduces inaccurate answers getting stored in the database.", correct: false },
       { option: "Offers the user an opportunity to enter a correct response.", correct: false }
-    ]
+    ],
+    isAnswered: false
   }
 ];
 
@@ -244,11 +249,13 @@ function isCorrect(event){
       nextQuestion[currentQuestion].answers[i].correct === true){
       userScore += 10;
       answerCorrect.classList.remove("hide");
+      nextQuestion[currentQuestion].isAnswered = true;
     }else if(answerText === nextQuestion[currentQuestion].answers[i].option
       &&
       nextQuestion[currentQuestion].answers[i].correct === false){
       userScore -= 10;
       answerIncorrect.classList.remove("hide");
+      nextQuestion[currentQuestion].isAnswered = true;
     };
   };
   console.log(event.target);
@@ -279,14 +286,16 @@ function timer() {
       clearInterval(timeCount);
       questionContainerEl.classList.add("hide");
       scoreButton.classList.remove("hide");
+      nextButton.classList.add("hide");
       document.getElementById(`time-readout`).classList.add(`hide`);
       userScore -= 10;
     };
 
-    if(currentQuestion === questions.length - 1){ /*This is the cause of our timer stopping on the last question. Need to figure out how to stop the timer when the user
-    has completed the test, not allowing it to continue after the last question has been answered*/
+    if(nextQuestion[4].isAnswered){ /*This is the cause of our timer stopping on the last question. Need to figure out how to stop the timer when the user
+    has completed the test, not allowing it to continue after the last question has been answered. Seems to be fixed, may need a slight amount more testing.*/
       clearInterval(timeCount);
     };
+    console.log(nextQuestion)
   }, 1000);
 };
 // if(currentQuestion === questions.length - 1){ /*This is the cause of our timer stopping on the last question. Need to figure out how to stop the timer when the user
