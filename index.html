@@ -11,22 +11,18 @@
 <body>
     <header id="primer-text">
         Hello! This is a short, 5 question coding-quiz app.
+        <br/>
+        First, please provide a name to save with your score
     </header>
     <section class="prompt" id="prompt">
-        <p>First, please provide a name to save with your score</p>
         <input type="text" name="user-name" id="user-name" placeholder="Your name here"/>
         <button id="submit-name">Submit</button>
         <button id="skip-name">Skip</button>
-    </section>  <!--Going to have to do some html work very soon here. I think it'd work well to restructure the quiz into two parts, denoted by the two section elements.
-My idea is the first part of the app will ask the user if they'd like to save a name with the score they'll recieve for doing the quiz, which will be a yes/no button prompt.
-If the user selects yes, it'll show them a input field for typing and sumbitting their name, and if the user selects no, the function associated will instead return false,
-which will denote a value-assignment to the name property like 'Unknown' or 'Anon'. After we've captured these responses, we'll take the user to the main page where they'll
-be primed for the quiz, and presented the start button that's currently immediatly presented to them. From this point the quiz will progress as it mostly has been, barring
-future changes(ex. correct/incorrect feedback on clicking answer buttons, displaying all the saved data we have for users scores)-->
+    </section>
     <section class="quiz hide" id="quiz">
         <p id="time-readout">Time left:</p>
         <div id="question-container" class="hide">
-            <div id="question">Question</div>
+            <h1 id="question"></h1>
             <div id="answer-buttons" class="btn-grid"></div>
             <p class="hide" id="answer-correct">Correct</p>
             <p class="hide" id="answer-incorrect">Incorrect</p>
@@ -37,10 +33,11 @@ future changes(ex. correct/incorrect feedback on clicking answer buttons, displa
             <button id="score-btn" class="score-btn btn hide">Highscores</button>
         </div>
         <div id="score-section" class="hide">
-            <p id="user-score"></p>
+            <h2 id="user-score"></h2>
+            <button id="retry-btn" class="btn hide">Retry?</button>
+            <button id="score-clear-btn" class="btn hide">Clear Highscores?</button>
             <ol id="score-board">Highscores:</ol>
-        </div> <!--Probably will want to target this with either a for loop or a forEach,
-        similarily to how we generate our questions and answer buttons. Basically generate a <p> for each saved score there is-->
+        </div>
     </section>
 </body>
 </html>
