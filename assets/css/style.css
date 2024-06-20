@@ -3,8 +3,12 @@ header{
     justify-content: space-between;
     font-size: larger;
     flex-direction: column;
+    margin: 0 0 5px 0;
 }
-
+ /*background-color: #e5e5f7;
+opacity: 0.8;
+background-size: 20px 20px;
+background-image:  repeating-linear-gradient(0deg, #444cf7, #444cf7 1px, #e5e5f7 1px, #e5e5f7);*/
 body{
     padding: 0;
     margin: 0;
@@ -14,6 +18,10 @@ body{
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    background-color: #e5e5f7;
+    opacity: 0.8;
+    background-size: 23px 23px;
+    background-image:  repeating-linear-gradient(0deg, #96ADE9, #96ADE9 1px, #e5e5f7 1px, #e5e5f7);;
 }
 
 .container{
@@ -22,6 +30,11 @@ body{
     background-color: white;
     border-radius: 5px;
     padding: 10px;
+}
+
+.prompt{
+    display: flex;
+    gap: 10px;
 }
 
 .btn-grid{
@@ -50,12 +63,30 @@ body{
     display: none;
 }
 
+.blue{
+    border: 1px solid #96ADE9;
+    opacity: 0.5;
+    padding-left: 100%;
+}
+
+#skip-name{
+    margin: 0 380px 0 0;
+}
+
+#time-readout{
+    margin: 5px 0 10px 10px;
+}
+
 #answer-correct{
     color: green;
 }
 
 #answer-incorrect{
     color: red;
+}
+
+#retry-btn{
+ margin: 0 10px 0 0;
 }
 
 #score-board{

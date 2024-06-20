@@ -1,13 +1,15 @@
-/*variables for targeting specific elements within the DOM. They're roughly grouped into semi-related chunks. In order primerText, startButton, scoreButton,
+/*variables for targeting specific elements within the DOM. They're roughly grouped into semi-related chunks. In order primerText, rulesList, startButton, scoreButton,
 questionContainerEl, questionEl, answerButtons, nextButton, answerCorrect, answerIncorrect, quizSection, scoreSection, scoreBoard, scoreReadout, usernameSection,
 usernameInput, submitName, skipName, resetButton, and clearHighscoresButton all select elements with varrying Ids that roughly equate to the name/functionality of
 their variable counterpart.*/
-/*Primer text that indicates what our user is instructed/greeted with*/
+/*Primer text that indicates what our user is instructed/greeted with, and rules for outlining our quiz rules*/
 let primerText = document.getElementById("primer-text");
+let rulesList = document.getElementById("rules-list");
 
 /*Buttons for controlling the start and end of our quiz*/
 let startButton = document.getElementById("start-btn");
 let scoreButton = document.getElementById("score-btn");
+let timeReadout = document.getElementById("time-readout");
 
 /*Containers for displaying our quiz questions and answers- and the correctness of the users choice- and buttons for controlling the answering of questions and
 generation of subsequent questions*/
@@ -148,7 +150,7 @@ let questions = [
       { option: "Boolean, string, array.", correct: false },
       { option: "Disabled, value, src.", correct: false },
       { option: "Text, number, date.", correct: true },
-      { option: "Bacon, lettus, tomato.", correct: false }
+      { option: "Bacon, lettuce, tomato.", correct: false }
     ],
     isAnswered: false
   },
@@ -258,7 +260,7 @@ let questions = [
       { option: "...comment it out.", correct: false },
       { option: "...console.log it out.", correct: true },
       { option: "...bracket it out.", correct: false },
-      { option: "...DELETE WHATEVER I broke, and START FROM SCRATCH.", correct: false }
+      { option: "...DELETE whatever I BROKE, and START from SCRATCH.", correct: false }
     ],
     isAnswered: false
   },
@@ -315,6 +317,7 @@ of 'hide' to its element, uses the startButton variable to add a class of 'hide'
 element visible. We then call the setupNextQuestion function*/
 function startGame() {
   timer();
+  rulesList.classList.add("hide");
   primerText.classList.add("hide");
   startButton.classList.add("hide");
   questionContainerEl.classList.remove("hide");
@@ -352,19 +355,16 @@ function generateQuestion(array) {
     button.addEventListener("click", isCorrect);
   });
 };
-//left-off checking/editting notes here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-/*answerSelected creates the disableBtn variable, which selects elements with a class name of 'disableBtn'. We then enter a
-for loop, where we initialize the variable i, check it against the length of the disableBtn variable, and iterate i if it is
-LESS THAN that check. Within the for loop, we set the disabled propery of disableBtn at an index to true(this prevents the
-user from clicking button elements after they've already selected one). Entering an if statement, we check if the length of
-the nextQuestion array(which is 5) IS GREATER THAN the number which currentQuestion evaluates to + 1(nextQuestion is an array,
-arrays are 0 indexed). If nextQuestion.length IS GREATER, then it will remove the class of 'hide' from the nextButton element,
-making it visible. If nextQuestion.length is NOT GREATER than currentQuestion + 1(which will happen once the user has reached
-the end of our array of questions), it will instead remove the class of 'hide' from the scoreButton variable, making the
-Highscore button visible. It will also add the class of 'hide' to an element with an Id of 'time-readout' which makes the
-timer not visible.*/
+
+/*answerSelected creates the disableBtn variable, which selects elements with a class name of 'disableBtn'. We then enter a for loop, where we initialize the variable i,
+check it against the length of the disableBtn variable, and iterate i if it is LESS THAN that check. Within the for loop, we set the disabled propery of disableBtn at
+an index to true(this prevents the user from clicking button elements after they've already selected one). Entering an if statement, we check if the length of the
+nextQuestion array(which is 5) IS GREATER THAN the number which currentQuestion evaluates to + 1(nextQuestion is an array, arrays are 0 indexed). If nextQuestion.length
+IS GREATER, then it will remove the class of 'hide' from the nextButton element, making it visible. If nextQuestion.length is NOT GREATER than currentQuestion + 1(which
+will happen once the user has reached the end of our array of questions), it will instead remove the class of 'hide' from the scoreButton variable, making the Highscore
+button visible. It will also add the class of 'hide' to the timeReadout variable, which makes the timer not visible.*/
 function answerSelected() {
-  let disableBtn = document.getElementsByClassName('disableBtn');
+  let disableBtn = document.getElementsByClassName("disableBtn");
 
   for(let i = 0; i < disableBtn.length; i++){
     disableBtn[i].disabled = true;
@@ -374,24 +374,21 @@ function answerSelected() {
     nextButton.classList.remove("hide");
   } else {
     scoreButton.classList.remove("hide");
-    document.getElementById(`time-readout`).classList.add(`hide`);
+    timeReadout.classList.add("hide");
   };
 };
 
-/*isCorrect first sets-up the variable answerText, for holding the target.innerHTML of the event parameter(this evaluates to
-what HTML is within a clicked answer button). We then enter a for loop, where we initialize the variable i, check it against
-the length of the answers property of our nextQuestion array at an index, and iterate the i variable if it is LESS THAN that check. We then enter
-an if statement that checks if our answerText variable evaluates to a given option property within our answers array at an
-index, within our nextQuestion array at an index- AND(&&) we also check if the correct property of our answers array at an
-index, within our nextQuestion array at an index evaluates to TRUE(checking the value of the clicked button and if its correct
-property is true, meaning its a correct answer). If both these checks are passed, we iterate the userScore variable by 10-
-indicating a correctly-chosen answer, remove the class of 'hide' from our answerCorrect variable- displaying a response that indicates a correctly-chosen answer, and
-set the isAnswered property of nextQuestion at an index to true. Then, we enter an else if statement that performs the first check verbatim, but inverts
-the second check; instead checking if the correct property within our answers array at an index, within our nextQuestion array
-at an index evaluates to FALSE(checking the value of the clicked button and if its correct property is false, meaning its an
-incorrect answer). If both the else if checks are passed we decrement the userScore variable by 10- indicating an incorrectly
-chosen answer, remove the class of 'hide' from our answerIncorrect variable- displaying a response that indicates an incorrectly-chosen answer, and set the isAnswered
-property of nextQuestion at an index to true.*/
+/*isCorrect first sets-up the variable answerText, for holding the target.innerHTML of the event parameter(this evaluates to what HTML is within a clicked answer
+button). We then enter a for loop, where we initialize the variable i, check it against the length of the answers property of our nextQuestion array at an index, and
+iterate the i variable if it is LESS THAN that check. We then enter an if statement that checks if our answerText variable evaluates to a given option property within
+our answers array at an index, within our nextQuestion array at an index- AND(&&) we also check if the correct property of our answers array at an index, within our
+nextQuestion array at an index evaluates to TRUE(checking the value of the clicked button and if its correct property is true, meaning its a correct answer). If both
+these checks are passed, we iterate the userScore variable by 10- indicating a correctly-chosen answer, remove the class of 'hide' from our answerCorrect variable-
+displaying a response that indicates a correctly-chosen answer, and set the isAnswered property of nextQuestion at an index to true. Then, we enter an else if statement
+that performs the first check verbatim, but inverts the second check; instead checking if the correct property within our answers array at an index, within our
+nextQuestion array at an index evaluates to FALSE(checking the value of the clicked button and if its correct property is false, meaning its an incorrect answer). If
+both the else if checks are passed we decrement the userScore variable by 10- indicating an incorrectly chosen answer, remove the class of 'hide' from our
+answerIncorrect variable- displaying a response that indicates an incorrectly-chosen answer, and set the isAnswered property of nextQuestion at an index to true.*/
 function isCorrect(event){
   let answerText = event.target.innerHTML;
 
@@ -413,24 +410,22 @@ function isCorrect(event){
   };
 };
 
-/*The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function,
-ensuring the user is immediatly timed upon beginning the quiz. First, we make a variable of timeCount which is used to call
-setInterval. The first argument of setInterval is a nameless function; this function selects an element with an Id of
-'time-readout' and gives it the text of 'Time left:' with a template literal of ${sec}, which allows the countdown to
-dynamically update as time passes. We then enter an if statement that checks if sec IS GREATER THAN 0(checking if we've
-ran out of time) and decrements sec if it is greater than zero. If sec is NOT GREATER than 0, we call clearInterval with an
-argument of timeCount- clearInterval being a built-in tool of setInterval which will interrupt its typical process, add the
-class of 'hide' to the questionContainerEl making it not visible, remove the class of 'hide' from the scoreButton variable
-making it visible, add a class of 'hide' to our nextButton variable, select an element with an Id of 'time-readout' and add the class of hide to it making the timer
-not visible, and decrement the userScore variable by 10(because the user will have ran out of time). We also have a secondary if statement
-that checks if the isAnswered property of the last test-item in the nextQuestion array evaluates to truthy(which would mean the user has reached the
-end of our quiz), and if so also calls clearInterval with an argument of timeCount. Finally, we have setIntervals second
-argument- after the curly brace with a comma- 1000, which is a measurment of milliseconds we'd like the setInterval function
-to delay itself by(evaluating to a 1 second passage of time).*/
+/*The timer function below is a very good example of a basic countdown. Within this app, it is called in the startGame function, ensuring the user is immediatly timed
+upon beginning the quiz. First, we make a variable of timeCount which is used to call setInterval. The first argument of setInterval is a nameless function; this
+function selects the variable timeReadout and gives it the text of 'Time left:' with a template literal of ${sec}, which allows the countdown to
+dynamically update as time passes. We then enter an if statement that checks if sec IS GREATER THAN 0(checking if we've ran out of time) and decrements sec if it is
+greater than zero. If sec is NOT GREATER than 0, we call clearInterval with an argument of timeCount- clearInterval being a built-in tool of setInterval which will
+interrupt its typical process(stop the timer), add the class of 'hide' to the questionContainerEl making it not visible, remove the class of 'hide' from the scoreButton
+variable making it visible, add a class of 'hide' to our nextButton variable, selects the variable timeReadout and adds the class of hide to it making the
+timer not visible, and decrement the userScore variable by 10(because the user will have ran out of time). We also have a secondary if statement that checks if the
+isAnswered property of the item at the last index in the nextQuestion array evaluates to truthy(which would mean the user has reached the end of our quiz), and if so
+also calls clearInterval with an argument of timeCount(ensuring the timer stops when the user has answered the last question). Finally, we have setIntervals second
+argument- after the curly brace with a comma- 1000, which is a measurment of milliseconds we'd like the setInterval function to delay itself by(evaluating to a 1 second
+passage of time).*/
 function timer() {
 
   const timeCount = setInterval(function () {
-    document.getElementById("time-readout").innerHTML = `Time left: ${sec}`;
+    timeReadout.innerHTML = `Time left: ${sec}`;
     
     if (sec > 0) {
       sec--;
@@ -439,7 +434,7 @@ function timer() {
       questionContainerEl.classList.add("hide");
       scoreButton.classList.remove("hide");
       nextButton.classList.add("hide");
-      document.getElementById(`time-readout`).classList.add(`hide`);
+      timeReadout.classList.add(`hide`);
       userScore -= 10;
     };
 
@@ -450,18 +445,18 @@ function timer() {
 };
 
 /*saveScore is a function which first defines the variable of totalScore as a combination of the numerical values of userScore and sec, then provides the userDataObj
-object-variable with some properties, which will be saved as user test-data. We then set the value of allScores variable to a JSON object, using its parse method to
-access an item saved in localStorage under the name 'scoreEntry' OR(||) we set allScores to an empty array(if there is no data under the described specifications to
-equate allScores to). After this, we enter an if statement where we check if the length property of allScores is LESS THAN five, and if so we push the userDataObj object
-to our allScores array. We enter an additional check in ouur else if statement, which checks if calling the exceedsLimit function on our allScores array evaluates to
-truthy(meaning we've exceeded the limit we want saved in our allScores array) AND(&&) if totalScore is GREATER THAN the score property of our allScores array at its last
-index(making sure scores are only replaced if the previously-saved score is exceeded by the users score of the current session), and if so we call the pop method on our
-allScores array- deleting the last entry within it, and push the userDataObj object-variable into our allScores array. After these checks, we call the sort method on our
-allScores array, using an anonymous function to compare the parameters of (a, b), where b.score essetially represents a higher-score and a.score a lower-score(suggest
-looking into examples or other implimentations of the sort method on google if confused, since the usage of the sort method is fairly simple while more is typically occuring
-under-the-hood). Finally, we use the setItem method on our localStorage with arguments of 'scoreEntry'(name property of item being set) and passing our allScores array as
-the argument for the stringify method on our JSON object(value property of item being set, converts the allScores variable into a JSON string)- then we call the scorePage
-function.*/
+object-variable with the properties of name and score, which will be saved as user test-data. We then set the value of allScores variable to a JSON object, using its
+parse method to access an item saved in localStorage under the name 'scoreEntry' OR(||) we set allScores to an empty array(if there is no data under the described
+specifications to equate allScores to). After this, we enter an if statement where we check if the length property of allScores is LESS THAN five, and if so we push the
+userDataObj object to our allScores array. We enter an additional check in ouur else if statement, which checks if calling the exceedsLimit function on our allScores
+array evaluates to truthy(meaning we've exceeded the limit we want saved in our allScores array) AND(&&) if totalScore is GREATER THAN the score property of our
+allScores array at its last index(making sure scores are only replaced if the previously-saved score is exceeded by the users score of the current session), and if so
+we call the pop method on our allScores array- deleting the last entry within it, and push the userDataObj object-variable into our allScores array. After these checks,
+we call the sort method on our allScores array, using an anonymous function to compare the parameters of (a, b), where b.score essetially represents a higher-score and
+a.score a lower-score(suggest looking into examples or other implimentations of the sort method on google if confused, since the usage of the sort method is fairly
+simple while more is typically occuring under-the-hood). Finally, we use the setItem method on our localStorage with arguments of 'scoreEntry'(name property of item
+being set) and passing our allScores array as the argument for the stringify method on our JSON object(value property of item being set, converts the allScores variable
+into a JSON string)- then we call the scorePage function.*/
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
@@ -482,11 +477,11 @@ function saveScore(){
 };
 
 /*scorePage accepts a parameter of sessionScore from the saveScore function(to get the totalScore value from saveScore). Then, it adds the class of 'hide' to the
-scoreButton and questionContainerEl variables, removes a class of 'hide' from the scoreSection variable, and sets the innerText property of our scoreReadout variable to
-a string with the template literal of ${sessionScore}, to render the users score. We then put the allScores array through a forEach loop, where score represents an
-individual item in allScores. We define the variable li to create an li element, set the innerText property of the li variable to a string with the template literals of
-${score.name} and ${score.score} to display the name of the user and their score, and call the appendChild method with an argument of li on our scoreBoard variable which
-generates the entries within allScores as highscores on scoreBoard.*/
+scoreButton and questionContainerEl variables, removes a class of 'hide' from the scoreSection and resetButton and clearHighscoresButton variables, and sets the innerText
+property of our scoreReadout variable to a string with the template literal of ${sessionScore}, to render the users score. We then put the allScores array through a
+forEach loop, where score represents an individual item in allScores. We define the variable li to create an li element, set the innerText property of the li variable to
+a string with the template literals of ${score.name} and ${score.score} to display the name of the user and their score, and call the appendChild method with an argument
+of li on our scoreBoard variable which generates the entries within allScores as highscores on scoreBoard.*/
 function scorePage(sessionScore){
   scoreButton.classList.add("hide");
   questionContainerEl.classList.add("hide");
@@ -517,8 +512,9 @@ function clearHighscores(){
 
 /*Below we have seven event listeners. resetButton calls the reloadQuiz function. clearHighscoresButton will call the clearHighscores function. The event listener on
 our scoreButton variable allows us to call the saveScore function. Our nextButton variable has an event listener that calls an anonymous function which iterates our
-currentQuestion variable, and calls the setupNextQuestion function. The event listener on our startButton variable allows us to call the startGame function. sumbitName
-and skipName are both for calling the setUsername function, depending on what name value the user would like associated with their score.*/
+currentQuestion variable(currentQuestion is used as an index, the iteration here ensures we'll progress through the test by properly targeting the index of following
+questions- everytime the next button is clicked), and calls the setupNextQuestion function. The event listener on our startButton variable allows us to call the
+startGame function. sumbitName and skipName are both for calling the setUsername function, depending on what name value the user would like associated with their score.*/
 resetButton.addEventListener("click", reloadQuiz);
 
 clearHighscoresButton.addEventListener("click", clearHighscores);
@@ -535,15 +531,10 @@ startButton.addEventListener("click", startGame);
 submitName.addEventListener("click", setUsername);
 skipName.addEventListener("click", setUsername);
 
+/*Here have the call for the only function calling itself. This is to ensure a randomized array of 5 questions is selected from the pool of 20 total questions before the
+user progresses the quiz further.*/
 determineQuestions();
 
 /*Still TODO:
-Would be nice to have an array of question objects which is larger than the amount of questions we'll have the user answer, so that we can further randomize the
-test by applying the shuffle function to that array of question-objects and pushing the first five into an array which will display those questions.
-  -we'll probably want to get rid of the current randomizing of the order our questions are displayed, as this would ensure they'll always be randomized from a
-  larger selection of questions
-  -need to impliment a limiter, probably want to push to an array which has a limit on its size, or only push to an array within a for loop while compairing against
-  a number
-
 Basic styling still largely not implimented
 */

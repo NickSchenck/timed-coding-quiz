@@ -11,8 +11,14 @@
 <body>
     <header id="primer-text">
         Hello! This is a short, 5 question coding-quiz app.
-        <br/>
-        First, please provide a name to save with your score
+        <ul id="rules-list">
+            The rules are as follows:
+            <li>For each answer you get correct your score will increase by 10.</li>
+            <li>For each answer you get incorrect your score will decrease by 10.</li>
+            <li>If you complete the quiz with time remaining, that time will be added to your score.</li>
+            <li>If you run out of time before completing the quiz, your score will decrease by 10.</li>
+        </ul>
+        First, please provide a name to save with your score.
     </header>
     <section class="prompt" id="prompt">
         <input type="text" name="user-name" id="user-name" placeholder="Your name here"/>
@@ -28,7 +34,7 @@
             <p class="hide" id="answer-incorrect">Incorrect</p>
         </div>
         <div id="controls">
-            <button id="start-btn" class="start-btn btn">Start Test</button>
+            <button id="start-btn" class="start-btn btn">Start</button>
             <button id="next-btn" class="next-btn btn hide">Next</button> 
             <button id="score-btn" class="score-btn btn hide">Highscores</button>
         </div>
