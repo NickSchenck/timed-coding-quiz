@@ -18,16 +18,14 @@ body{
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    background-color: #e5e5f7;
-    opacity: 0.8;
+    background-color: white;
     background-size: 23px 23px;
-    background-image:  repeating-linear-gradient(0deg, #96ADE9, #96ADE9 1px, #e5e5f7 1px, #e5e5f7);;
+    background-image:  repeating-linear-gradient(0deg, rgba(150, 173, 233, 0.5), rgba(150, 173, 233, 0.5) 1px, white 1px, white);;
 }
 
 .container{
     width: 800px;
     max-width: 80%;
-    background-color: white;
     border-radius: 5px;
     padding: 10px;
 }
@@ -45,11 +43,13 @@ body{
 
 .btn{
     padding: 10px 20px;
-    font-size: larger;
+    font-size: 15px;
+    opacity: 0.7;
+    /* background-color: rgba(235, 235, 235, 0.8) */
 }
 
 .start-btn .next-btn{
-    font-size: x-large;
+    font-size: 15px;
     padding: 10px 20px;
 }
 
@@ -69,8 +69,12 @@ body{
     padding-left: 100%;
 }
 
+#user-name{
+    opacity: 0.7;
+}
+
 #skip-name{
-    margin: 0 380px 0 0;
+    margin-right: 345px;
 }
 
 #time-readout{

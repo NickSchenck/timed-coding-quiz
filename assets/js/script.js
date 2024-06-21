@@ -53,7 +53,12 @@ let userDataObj = {};
 
 /*this is a helper-function for shuffling arrays, known as the fisher-yates shuffle. This implimentation of it was taken from: https://bost.ocks.org/mike/shuffle/
 The old shuffling method used was this: questions.sort(() => Math.random() - 0.5) which apparently is inefficient and not totally random, but was alright for smaller
-arrays*/
+arrays. The inline comments came with the function, and do a good job of explaining its process.*/
+/*shuffle affects the array passed to it as an argument. First, we define the variable m as equal to the passed array's length property, as well as initialize the
+variables t and i. We then enter a while loop that checks if m evaluates to truthy. While m is truthy, we set i equal to a whole, random number times(*) m being
+decremented(--). Then- still in the while loop- we set t equal to an index of the passed array, set the index of that array equal to another index of that array, and we
+set that array's index equal to t(this logic seems very circular, but that's intentional, as this is how index's within the array are shuffled). Once we exit the while
+loop- when m has been reduced to 0- we return the now shuffled array.*/
 function shuffle(array) {
   let m = array.length, t, i;
   // While there remain elements to shuffle
@@ -296,14 +301,17 @@ function setUsername(event){
   if(event.target.id === "submit-name"){
     userName = usernameInput.value;
   }else{
-    userName = "Anonymous";
+    userName = `Anonymous`;
   };
   usernameSection.classList.add("hide");
   quizSection.classList.remove("hide");
-  primerText.innerText = "When ready, click the 'Start' button below to begin the quiz, which will also start the timer. Good luck!";
+  primerText.innerText = `When ready, click the 'Start' button below to begin the quiz, which will also start the timer. Good luck!`;
 };
 
-/*Need to comment/note this function, is what randomizes what questions nextQuestion will have.*/
+/*determineQuestions is a function which populates our nextQuestion variable with the question the user will see. First, we call the shuffle function on the questions
+array, changing the order of the question-objects contained in it. Then, we enter a for loop, where we initialize i, check if i is LESS THAN 5, and iterate i if so. While
+i is less than 5, we use the push method to populate nextQuestion with entries that correspond to the questions array at an index. Once we exit our for loop, we return
+the now populated nextQuestion variable.*/
 function determineQuestions(){
   shuffle(questions);
   for(let i = 0; i < 5; i++){
@@ -447,25 +455,38 @@ function timer() {
 /*saveScore is a function which first defines the variable of totalScore as a combination of the numerical values of userScore and sec, then provides the userDataObj
 object-variable with the properties of name and score, which will be saved as user test-data. We then set the value of allScores variable to a JSON object, using its
 parse method to access an item saved in localStorage under the name 'scoreEntry' OR(||) we set allScores to an empty array(if there is no data under the described
-specifications to equate allScores to). After this, we enter an if statement where we check if the length property of allScores is LESS THAN five, and if so we push the
-userDataObj object to our allScores array. We enter an additional check in ouur else if statement, which checks if calling the exceedsLimit function on our allScores
-array evaluates to truthy(meaning we've exceeded the limit we want saved in our allScores array) AND(&&) if totalScore is GREATER THAN the score property of our
-allScores array at its last index(making sure scores are only replaced if the previously-saved score is exceeded by the users score of the current session), and if so
-we call the pop method on our allScores array- deleting the last entry within it, and push the userDataObj object-variable into our allScores array. After these checks,
-we call the sort method on our allScores array, using an anonymous function to compare the parameters of (a, b), where b.score essetially represents a higher-score and
-a.score a lower-score(suggest looking into examples or other implimentations of the sort method on google if confused, since the usage of the sort method is fairly
-simple while more is typically occuring under-the-hood). Finally, we use the setItem method on our localStorage with arguments of 'scoreEntry'(name property of item
-being set) and passing our allScores array as the argument for the stringify method on our JSON object(value property of item being set, converts the allScores variable
-into a JSON string)- then we call the scorePage function.*/
+specifications to equate allScores to). After this, we enter an if statement where we check if the length property of allScores is LESS THAN five AND(&&) if totalScore
+is GREATER OR EQUAL TO 10 and if so we push the userDataObj object to our allScores array. We enter an additional check in ouur else if statement, which checks if
+calling the exceedsLimit function on our allScores array evaluates to truthy(meaning we've exceeded the limit we want saved in our allScores array) AND(&&) if totalScore
+is GREATER THAN the score property of our allScores array at its last index(making sure scores are only replaced if the previously-saved score is exceeded by the users
+score of the current session), and if so we call the pop method on our allScores array- deleting the last entry within it, and push the userDataObj object-variable into
+our allScores array. After these checks, we call the sort method on our allScores array, using an anonymous function to compare the parameters of (a, b), where b.score
+essetially represents a higher-score and a.score a lower-score(suggest looking into examples or other implimentations of the sort method on google if confused, since the
+usage of the sort method is fairly simple while more is typically occuring under-the-hood). Finally, we use the setItem method on our localStorage with arguments of
+'scoreEntry'(name property of item being set) and passing our allScores array as the argument for the stringify method on our JSON object(value property of item being
+set, converts the allScores variable into a JSON string)- then we call the scorePage function.*/
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
+    id: 1,
     name: userName,
     score: totalScore
   };
   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
+  console.log(allScores)
 
-  if(allScores.length < 5){
+  if(allScores.length === 0){
+    userDataObj = userDataObj;
+  }else{
+    for(let i = 0; i < allScores.length; i++){ //this is currently not iterating through the whole array properly; if the id's get out of order(ex. highest score has an id of 3, lower scores have ids lower than that) it can/will produce a duplicate id
+      if(userDataObj.id === allScores[i].id){
+        userDataObj.id++;
+      };
+    };
+  };
+  
+
+  if(allScores.length < 5 && totalScore >= 10){
     allScores.push(userDataObj);
   }else if(exceedsLimit(allScores) && totalScore > allScores[4].score){
     allScores.pop();
@@ -475,6 +496,24 @@ function saveScore(){
   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
   scorePage(totalScore);
 };
+// function saveScore(){
+//   let totalScore = userScore + sec;
+//   userDataObj = {
+//     name: userName,
+//     score: totalScore
+//   };
+//   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
+
+//   if(allScores.length < 5 && totalScore >= 10){
+//     allScores.push(userDataObj);
+//   }else if(exceedsLimit(allScores) && totalScore > allScores[4].score){
+//     allScores.pop();
+//     allScores.push(userDataObj);
+//   };
+//   allScores.sort((a, b) => b.score - a.score);
+//   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
+//   scorePage(totalScore);
+// };
 
 /*scorePage accepts a parameter of sessionScore from the saveScore function(to get the totalScore value from saveScore). Then, it adds the class of 'hide' to the
 scoreButton and questionContainerEl variables, removes a class of 'hide' from the scoreSection and resetButton and clearHighscoresButton variables, and sets the innerText
@@ -490,12 +529,24 @@ function scorePage(sessionScore){
   clearHighscoresButton.classList.remove("hide");
   scoreReadout.innerText = `You scored ${sessionScore} points!`;
 
+  
+
   allScores.forEach((score) =>{
     let li = document.createElement("li");
     li.innerText = `${score.name}: ${score.score}`;
     scoreBoard.appendChild(li);
   });
 };
+/*Idea is sound, but need to test other pieces of code. We're trying to alter the message the user will recieve, based on if they've achieved a score that would be saved
+but didn't beat previous saved-scores, if they've achieved a score that would be saved and was saved- either because the highscores not being full or beating a previously
+saved score, or if they've achieved a score which is too low to be saved- regardless of if the highscores are not full.*/
+// for(let i = 0; i < allScores.length; i++){
+//   if(userSession.name !== allScores[i].name){
+//     scoreReadout.innerText = `You scored ${userSession.score} points, but didn't beat the previous scores!`;
+//   }else if(userSession.name === allScores[i].name){
+//     scoreReadout.innerText = `You scored ${userSession.score} points, check to see where you placed!`;
+//   }
+// }
 
 /*reloadQuiz does exactly what it says; calls the reload method on the location property of our window object, reloading the app page and allowing the user to retry the
 quiz*/
@@ -507,6 +558,7 @@ function reloadQuiz(){
 which will empty-out the highscore section*/
 function clearHighscores(){
   clearHighscoresButton.innerText = `Highscores cleared!`;
+  scoreBoard.innerText = ``;
   localStorage.clear(allScores);
 };
 
@@ -534,7 +586,3 @@ skipName.addEventListener("click", setUsername);
 /*Here have the call for the only function calling itself. This is to ensure a randomized array of 5 questions is selected from the pool of 20 total questions before the
 user progresses the quiz further.*/
 determineQuestions();
-
-/*Still TODO:
-Basic styling still largely not implimented
-*/
