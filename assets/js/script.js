@@ -474,17 +474,18 @@ function saveScore(){
   };
   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
   console.log(allScores)
-
+  allScores.sort((a, b) => a.id - b.id);
+  
   if(allScores.length === 0){
     userDataObj = userDataObj;
   }else{
-    for(let i = 0; i < allScores.length; i++){ //this is currently not iterating through the whole array properly; if the id's get out of order(ex. highest score has an id of 3, lower scores have ids lower than that) it can/will produce a duplicate id
+    for(let i = 0; i < allScores.length; i++){
       if(userDataObj.id === allScores[i].id){
         userDataObj.id++;
       };
     };
   };
-  
+  allScores.sort((a, b) => b.score - a.score);
 
   if(allScores.length < 5 && totalScore >= 10){
     allScores.push(userDataObj);
@@ -494,7 +495,7 @@ function saveScore(){
   };
   allScores.sort((a, b) => b.score - a.score);
   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
-  scorePage(totalScore);
+  scorePage(userDataObj);
 };
 // function saveScore(){
 //   let totalScore = userScore + sec;
@@ -521,13 +522,14 @@ property of our scoreReadout variable to a string with the template literal of $
 forEach loop, where score represents an individual item in allScores. We define the variable li to create an li element, set the innerText property of the li variable to
 a string with the template literals of ${score.name} and ${score.score} to display the name of the user and their score, and call the appendChild method with an argument
 of li on our scoreBoard variable which generates the entries within allScores as highscores on scoreBoard.*/
-function scorePage(sessionScore){
+function scorePage(sessionObj){
   scoreButton.classList.add("hide");
   questionContainerEl.classList.add("hide");
   scoreSection.classList.remove("hide");
   resetButton.classList.remove("hide");
   clearHighscoresButton.classList.remove("hide");
-  scoreReadout.innerText = `You scored ${sessionScore} points!`;
+  scoreReadout.innerText = `You scored ${sessionObj.score} points!`;//now that we have iterable ids on our userDataObj, figuring out how to provide a more customized completion message
+  console.log(sessionObj);//I think a switch-statement may work very well here, where each case will dictate what end-of-app message the user is displayed.
 
   
 
