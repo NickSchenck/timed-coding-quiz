@@ -210,12 +210,12 @@ let questions = [
     isAnswered: false
   },
   {
-    question: "How can you write comments/notes in HTML, CSS, and javascript?",
+    question: "What are the required keywords in a switch statement?",
     answers: [
-      { option: "annotate tag for HTML, note property for CSS, and setComment attribute for javascript.", correct: false },
-      { option: "'<!---->' for HTML, '/**/' for CSS, and '//' OR '/**/' for javascript.", correct: true },
-      { option: "The methods for denoting comments in each are kept homogeneous, to ensure best practices.", correct: false },
-      { option: "Notes? I just draw... ☺☻ §♫ ☼♥", correct: false }
+      { option: "toggle and disable.", correct: false },
+      { option: "case and break.", correct: true },
+      { option: "try and check.", correct: false },
+      { option: "on and off.", correct: false }
     ],
     isAnswered: false
   },
@@ -453,18 +453,24 @@ function timer() {
 };
 
 /*saveScore is a function which first defines the variable of totalScore as a combination of the numerical values of userScore and sec, then provides the userDataObj
-object-variable with the properties of name and score, which will be saved as user test-data. We then set the value of allScores variable to a JSON object, using its
+object-variable with the properties of id, name, and score- which will be saved as user test-data. We then set the value of allScores variable to a JSON object, using its
 parse method to access an item saved in localStorage under the name 'scoreEntry' OR(||) we set allScores to an empty array(if there is no data under the described
-specifications to equate allScores to). After this, we enter an if statement where we check if the length property of allScores is LESS THAN five AND(&&) if totalScore
-is GREATER OR EQUAL TO 10 and if so we push the userDataObj object to our allScores array. We enter an additional check in ouur else if statement, which checks if
-calling the exceedsLimit function on our allScores array evaluates to truthy(meaning we've exceeded the limit we want saved in our allScores array) AND(&&) if totalScore
-is GREATER THAN the score property of our allScores array at its last index(making sure scores are only replaced if the previously-saved score is exceeded by the users
-score of the current session), and if so we call the pop method on our allScores array- deleting the last entry within it, and push the userDataObj object-variable into
-our allScores array. After these checks, we call the sort method on our allScores array, using an anonymous function to compare the parameters of (a, b), where b.score
-essetially represents a higher-score and a.score a lower-score(suggest looking into examples or other implimentations of the sort method on google if confused, since the
-usage of the sort method is fairly simple while more is typically occuring under-the-hood). Finally, we use the setItem method on our localStorage with arguments of
-'scoreEntry'(name property of item being set) and passing our allScores array as the argument for the stringify method on our JSON object(value property of item being
-set, converts the allScores variable into a JSON string)- then we call the scorePage function.*/
+specifications to equate allScores to). Then we call the sort method on allScores, sorting its entries by lowest id property to highest id property(ids 1-5, 6 upon
+replacing a highscore entry). We then enter an if statement where we check if the length property of allScores is 0, and assign userDataObj equal to itself if so(this
+will assign the instantiated value of 1 to the id property). If the length property of allScores is not 0(if there are entries within allScores), we enter a for loop,
+initializing i as 0, checking if i is LESS THAN allscores.length, and iterating i if that check is true. We enter another if statement that checks if the id property of
+userDataObj is equal to the id property of allScores at an index, and if it is we iterate the id property of userDataObj(this prevents duplicate id's from being generated,
+and iterates them as they're created). Once again, we use the sort method on allScores, sorting by the highest score property to the lowest score property. After this,
+we enter an if statement where we check if the length property of allScores is LESS THAN five AND(&&) if totalScore is GREATER OR EQUAL TO 20 and if so we push the
+userDataObj object to our allScores array. We enter an additional check in our else if statement, which checks if calling the exceedsLimit function on our allScores array
+evaluates to truthy(meaning we've exceeded the limit we want saved in our allScores array) AND(&&) if totalScore is GREATER THAN the score property of our allScores array
+at its last index(making sure scores are only replaced if the previously-saved score is exceeded by the users score of the current session), and if so we call the pop
+method on our allScores array- deleting the last entry within it, and push the userDataObj object-variable into our allScores array. After these checks, we call the sort
+method on our allScores array again, sorting by the highest score property to the lowest score property.(suggest looking into examples or other implimentations of the
+sort method on google if confused, since the usage of the sort method is fairly simple while more is typically occuring under-the-hood). Finally, we use the setItem
+method on our localStorage with arguments of 'scoreEntry'(name property of item being set) and passing our allScores array as the argument for the stringify method on
+our JSON object(value property of item being set, converts the allScores variable into a JSON string)- then we call the scorePage function, passing it the userDataObj
+variable as an argument.*/
 function saveScore(){
   let totalScore = userScore + sec;
   userDataObj = {
@@ -473,7 +479,6 @@ function saveScore(){
     score: totalScore
   };
   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
-  console.log(allScores)
   allScores.sort((a, b) => a.id - b.id);
   
   if(allScores.length === 0){
@@ -487,7 +492,7 @@ function saveScore(){
   };
   allScores.sort((a, b) => b.score - a.score);
 
-  if(allScores.length < 5 && totalScore >= 10){
+  if(allScores.length < 5 && totalScore >= 20){
     allScores.push(userDataObj);
   }else if(exceedsLimit(allScores) && totalScore > allScores[4].score){
     allScores.pop();
@@ -497,41 +502,42 @@ function saveScore(){
   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
   scorePage(userDataObj);
 };
-// function saveScore(){
-//   let totalScore = userScore + sec;
-//   userDataObj = {
-//     name: userName,
-//     score: totalScore
-//   };
-//   allScores = JSON.parse(localStorage.getItem("scoreEntry")) || [];
 
-//   if(allScores.length < 5 && totalScore >= 10){
-//     allScores.push(userDataObj);
-//   }else if(exceedsLimit(allScores) && totalScore > allScores[4].score){
-//     allScores.pop();
-//     allScores.push(userDataObj);
-//   };
-//   allScores.sort((a, b) => b.score - a.score);
-//   localStorage.setItem('scoreEntry', JSON.stringify(allScores));
-//   scorePage(totalScore);
-// };
-
-/*scorePage accepts a parameter of sessionScore from the saveScore function(to get the totalScore value from saveScore). Then, it adds the class of 'hide' to the
-scoreButton and questionContainerEl variables, removes a class of 'hide' from the scoreSection and resetButton and clearHighscoresButton variables, and sets the innerText
-property of our scoreReadout variable to a string with the template literal of ${sessionScore}, to render the users score. We then put the allScores array through a
-forEach loop, where score represents an individual item in allScores. We define the variable li to create an li element, set the innerText property of the li variable to
-a string with the template literals of ${score.name} and ${score.score} to display the name of the user and their score, and call the appendChild method with an argument
-of li on our scoreBoard variable which generates the entries within allScores as highscores on scoreBoard.*/
+/*scorePage accepts a parameter of sessionObj from the saveScore function(to get the score property from saveScore). Then, it adds the class of 'hide' to the scoreButton
+and questionContainerEl variables, and removes a class of 'hide' from the scoreSection variable. After this, we enter an if statement which checks if the length property
+of allScores equals 0 AND(&&) if the score property of sessionObj is LESS THAN 20, and if so we add the class of 'hide' to the clearHighscoresButton and scoreBoard
+variables(this handles the edge-case of the user producing a score which will not be saved, while the highscore board is empty). We then enter an if statement that checks
+if allScores at an index evaluates to truthy(if an entry exists at the index) AND(&&) if the id property of sessionObj equals the id property of allScores at an index,
+and if so we set the innerText property of the scoreReadout variable to a string, containing a template literal of ${sessionObj.score}. This repeats for each index that
+allScores may have, only slightly altering the users text-feedback to indicate where they placed in the highscore board. If non of the if or else if statements are met,
+we instead set the innerText property of scoreReadout to a string containing a template literal of ${sessionScore.score} and an indication they did not achieve a score
+which will be saved/displayed to the highscore board. We then put the allScores array through a forEach loop, where score represents an individual item in allScores. We
+define the variable li to create an li element, set the innerText property of the li variable to a string with the template literals of ${score.name} and ${score.score}
+to display the name of the user and their score, and call the appendChild method with an argument of li on our scoreBoard variable which generates the entries within
+allScores as highscores on scoreBoard.*/
 function scorePage(sessionObj){
   scoreButton.classList.add("hide");
   questionContainerEl.classList.add("hide");
   scoreSection.classList.remove("hide");
-  resetButton.classList.remove("hide");
-  clearHighscoresButton.classList.remove("hide");
-  scoreReadout.innerText = `You scored ${sessionObj.score} points!`;//now that we have iterable ids on our userDataObj, figuring out how to provide a more customized completion message
-  console.log(sessionObj);//I think a switch-statement may work very well here, where each case will dictate what end-of-app message the user is displayed.
 
-  
+  if(allScores.length === 0 && sessionObj.score < 20){
+    clearHighscoresButton.classList.add("hide");
+    scoreBoard.classList.add("hide");
+  };
+
+  if(allScores[0] && sessionObj.id === allScores[0].id){ 
+    scoreReadout.innerText = `You scored ${sessionObj.score} points and placed 1st!`;
+  }else if(allScores[1] && sessionObj.id === allScores[1].id){
+    scoreReadout.innerText = `You scored ${sessionObj.score} points and placed 2nd!`;
+  }else if(allScores[2] && sessionObj.id === allScores[2].id){
+    scoreReadout.innerText = `You scored ${sessionObj.score} points and placed 3rd!`;
+  }else if(allScores[3] && sessionObj.id === allScores[3].id){
+    scoreReadout.innerText = `You scored ${sessionObj.score} points and placed 4th!`;
+  }else if(allScores[4] && sessionObj.id === allScores[4].id){
+    scoreReadout.innerText = `You scored ${sessionObj.score} points and placed 5th!`;
+  }else{
+    scoreReadout.innerText = `You scored ${sessionObj.score} points, but didn't make the highscore table.`;
+  }
 
   allScores.forEach((score) =>{
     let li = document.createElement("li");
@@ -539,16 +545,6 @@ function scorePage(sessionObj){
     scoreBoard.appendChild(li);
   });
 };
-/*Idea is sound, but need to test other pieces of code. We're trying to alter the message the user will recieve, based on if they've achieved a score that would be saved
-but didn't beat previous saved-scores, if they've achieved a score that would be saved and was saved- either because the highscores not being full or beating a previously
-saved score, or if they've achieved a score which is too low to be saved- regardless of if the highscores are not full.*/
-// for(let i = 0; i < allScores.length; i++){
-//   if(userSession.name !== allScores[i].name){
-//     scoreReadout.innerText = `You scored ${userSession.score} points, but didn't beat the previous scores!`;
-//   }else if(userSession.name === allScores[i].name){
-//     scoreReadout.innerText = `You scored ${userSession.score} points, check to see where you placed!`;
-//   }
-// }
 
 /*reloadQuiz does exactly what it says; calls the reload method on the location property of our window object, reloading the app page and allowing the user to retry the
 quiz*/
