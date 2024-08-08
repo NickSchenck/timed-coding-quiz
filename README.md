@@ -1,6 +1,26 @@
-# timed-coding-quiz
-This page will present the user with opening information about the five question quiz they are about to take while
-under a timer. It will have a button to begin the quiz, which will direct the user to the first question and start
-the timer. When the user enters an input for a given question they will advance to the next question. If they enter
-an incorrect option they will have time deducted from their total. Once all questions are answered the user will be
-presented with their time left, an option to save their score, and an option to view scores that have been saved.
+[![Generic badge](https://img.shields.io/badge/license-N/A-<COLOR>.svg)](#license)
+  # Timed Coding Quiz
+  ## Description
+  An app which presents the user with a randomized, five question quiz that allows the user to try and beat a threshold to save their score, and will allow the user to reset the score-table on a button press.
+  ## Table of Contents
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [Tests](#tests)
+  * [Contributing](#contributing)
+  * [License](#license)
+  * [Questions](#questions)
+  ## Installation
+  Using a CLI of your choice, navigate to the directory you'd like the repository copied to, and use the command 'git clone https://github.com/NickSchenck/timed-coding-quiz.git'.
+  ## Tests
+  N/A
+  ## Usage
+  Run the index.html file in a browser of your choice. Alternately you can use this link: https://nickschenck.github.io/timed-coding-quiz/
+  ## Contributing
+  N/A
+  ## License
+  ### This app is licensed under the [N/A](This app has no license.) license.
+  ## Questions
+  * GitHub: [NickSchenck](https://github.com/NickSchenck)
+  * Email: 
+  [yoyo4games@yahoo.com](mailto:yoyo4games@yahoo.com)
+  

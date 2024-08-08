@@ -509,7 +509,7 @@ of allScores equals 0 AND(&&) if the score property of sessionObj is LESS THAN 2
 variables(this handles the edge-case of the user producing a score which will not be saved, while the highscore board is empty). We then enter an if statement that checks
 if allScores at an index evaluates to truthy(if an entry exists at the index) AND(&&) if the id property of sessionObj equals the id property of allScores at an index,
 and if so we set the innerText property of the scoreReadout variable to a string, containing a template literal of ${sessionObj.score}. This repeats for each index that
-allScores may have, only slightly altering the users text-feedback to indicate where they placed in the highscore board. If non of the if or else if statements are met,
+allScores may have, only slightly altering the users text-feedback to indicate where they placed in the highscore board. If none of the if or else if statements are met,
 we instead set the innerText property of scoreReadout to a string containing a template literal of ${sessionScore.score} and an indication they did not achieve a score
 which will be saved/displayed to the highscore board. We then put the allScores array through a forEach loop, where score represents an individual item in allScores. We
 define the variable li to create an li element, set the innerText property of the li variable to a string with the template literals of ${score.name} and ${score.score}
