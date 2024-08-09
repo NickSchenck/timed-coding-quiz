@@ -1,7 +1,7 @@
 [![Generic badge](https://img.shields.io/badge/license-N/A-<COLOR>.svg)](#license)
   # Timed Coding Quiz
   ## Description
-  An app which presents the user with a randomized, five question quiz that allows the user to try and beat a threshold to save their score, and will allow the user to reset the score-table on a button press.
+  An app which presents the user with a randomized, five question quiz that allows the user to try and beat a threshold to save their score, will display their score alongside previous scores, and will allow the user to reset the quiz or score-table on a button press.
   ## Table of Contents
   * [Installation](#installation)
   * [Usage](#usage)
@@ -18,7 +18,7 @@
   ## Contributing
   N/A
   ## License
-  ### This app is licensed under the [N/A](This app has no license.) license.
+  ### This app has no applicable license.
   ## Questions
   * GitHub: [NickSchenck](https://github.com/NickSchenck)
   * Email: 
